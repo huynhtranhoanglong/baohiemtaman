@@ -31,6 +31,7 @@
 8. System Automation: The Global Care system automatically sends the final E-certificate (insurance certificate) to the customer's email and records the commission for the Admin. This concludes the fulfillment process.
 
 ## 4. Workflows & Specific Rules
+- **Quy trình Phát triển & Triển khai (Dev & Deploy Workflow)**: Mọi chức năng mới, sửa lỗi hoặc chỉnh sửa giao diện PHẢI được tiến hành và kiểm thử trên môi trường Cục bộ (Localhost thông qua `npm run dev`). Sau khi người dùng xác nhận bản chạy thử đã hoàn hảo, mã nguồn mới được phép "chốt" (Commit) và đẩy (Push) lên nhánh `main` trên GitHub. Hệ thống Vercel sẽ tự động lắng nghe nhánh `main` này để thiết lập và chạy trang thật (Production: `baohiemtaman.com`). Không sửa trực tiếp trên Production.
 - **Language**: All documentation, including this Knowledge Base, Skills, Workflows, plans, and communication with the user MUST be written in **Vietnamese**. This supersedes any previous rules requiring English documentation.
 - **Anti-Hallucination (No Assumptions)**: Before capturing knowledge or making updates, the agent MUST explicitly ask the user for any missing, necessary context. The agent is strictly prohibited from inventing or assuming details ("hallucinating") to fill in gaps.
 - **Active Knowledge Capture**: ONLY AFTER all necessary context is gathered and clear, the agent MUST proactively update this `PROJECT_KNOWLEDGE_BASE.md` whenever the user makes a decision, changes a requirement, or adds a constraint during conversations. 
@@ -44,3 +45,4 @@
 - Updated Sections 1, 2, and 3 with the core business model, Global Care/DBV partnership details, the Facebook Ads -> LP -> Manual fulfillment funnel, and scoped Phase 1 to building the Landing Page.
 - Updated KB with extensive new details mapping product pricing to vehicle categories, updated fulfillment logic (Global Care system automation), variable commissions, and new form fields for different plate registration flows.
 - Updated project name to "Tam An Insurance" and added backend/infrastructure requirements (Vercel deployment, baohiemtaman.com custom domain, and Google Sheets integration).
+- Added Development & Deployment Workflow (Localhost -> GitHub `main` -> Vercel Production) to Section 4.

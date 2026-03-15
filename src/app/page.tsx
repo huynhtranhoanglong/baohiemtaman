@@ -93,6 +93,10 @@ export default function Home() {
       licensePlate: '',
       chassisNumber: '',
       engineNumber: '',
+      ownerName: '',
+      address: '',
+      email: '',
+      phone: '',
       isVoluntaryIncluded: true,
       provider: 'dbv'
     }));
@@ -261,7 +265,7 @@ export default function Home() {
             <SuccessCard 
               email={formData.email}
               onBuyAnother={handleBuyAnother}
-              onGoHome={() => alert('Quay lại Cổng App Momo chính...')}
+              onGoHome={handleBuyAnother}
             />
           )}
 

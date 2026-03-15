@@ -14,6 +14,8 @@ export async function POST(req: Request) {
       licensePlate,
       chassisNumber,
       engineNumber,
+      ownerName,    // Tên chủ xe / khách hàng
+      address,      // Địa chỉ khách hàng
       email,
       phone,
       isVoluntaryIncluded,
@@ -71,7 +73,7 @@ export async function POST(req: Request) {
 
     // --- Ghi dữ liệu vào cuối Bảng (Append) ---
     // Thứ tự Cột yêu cầu: 
-    // THỜI GIAN, CTY BẢO HIỂM, SỐ NĂM, BẮT ĐẦU, KẾT THÚC, LOẠI XE, BIỂN SỐ, SỐ KHUNG, SỐ MÁY, EMAIL, SỐ ĐIỆN THOẠI, TỰ NGUYỆN?, TỔNG TIỀN
+    // THỜI GIAN, CTY BẢO HIỂM, SỐ NĂM, BẮT ĐẦU, KẾT THÚC, LOẠI XE, BIỂN SỐ, SỐ KHUNG, SỐ MÁY, EMAIL, SỐ ĐIỆN THOẠI, TỰ NGUYỆN?, TỔNG TIỀN, TÊN KHÁCH HÀNG, ĐỊA CHỈ
     const rowData = [
       gmt7DateString,              // A: THỜI GIAN (GMT+7)
       provider.toUpperCase(),      // B: CTY BẢO HIỂM
@@ -85,12 +87,14 @@ export async function POST(req: Request) {
       email,                       // J: EMAIL
       phone,                       // K: SỐ ĐIỆN THOẠI
       isVoluntaryIncluded ? 'Có' : 'Không', // L: TỰ NGUYỆN?
-      totalPrice                   // M: TỔNG TIỀN
+      totalPrice,                  // M: TỔNG TIỀN
+      ownerName || '',             // N: TÊN KHÁCH HÀNG
+      address || ''                // O: ĐỊA CHỈ
     ];
 
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'A:M', // Truyền A:M để tự động lấy Sheet đầu tiên (bất kể tên là Trang tính 1 hay Sheet1)
+      range: 'A:O', // Cột mở rộng đến O
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [rowData],
