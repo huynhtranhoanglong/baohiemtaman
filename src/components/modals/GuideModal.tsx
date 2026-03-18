@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, HelpCircle, Search } from 'lucide-react';
+import Image from 'next/image';
+import { X, HelpCircle, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface GuideModalProps {
   isOpen: boolean;
@@ -11,6 +12,35 @@ interface GuideModalProps {
 export default function GuideModal({ isOpen, onClose }: GuideModalProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = ['Mẫu cà vẹt xe mới', 'Mẫu chứng nhận cũ'];
+
+  // Swipe handlers
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  
+  const minSwipeDistance = 40;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEndHandler = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe && currentSlide < slides.length - 1) {
+      setCurrentSlide(currentSlide + 1);
+    }
+    if (isRightSwipe && currentSlide > 0) {
+      setCurrentSlide(currentSlide - 1);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -23,39 +53,55 @@ export default function GuideModal({ isOpen, onClose }: GuideModalProps) {
       />
 
       {/* Modal Dialog Bottom Sheet */}
-      <div className="relative w-full max-w-md bg-white rounded-t-2xl sm:rounded-2xl pb-8 pt-4 px-4 shadow-xl z-50 animate-slide-up h-[85vh] flex flex-col">
+      <div className="relative w-full max-w-md bg-white rounded-t-2xl sm:rounded-2xl pb-4 pt-4 px-4 shadow-xl z-50 animate-slide-up max-h-[90vh] flex flex-col">
         {/* Grabber line */}
         <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4 shrink-0" />
 
-        <div className="flex justify-between items-center mb-4 shrink-0">
-          <h2 className="text-[18px] font-bold text-[#1a1a1a]">Cách tìm số khung, số máy</h2>
+        <div className="relative flex justify-center items-center mb-4 shrink-0">
+          <h2 className="text-[18px] font-bold text-[#1a1a1a] text-center w-full px-8">Cách tìm số khung, số máy</h2>
           <button 
             onClick={onClose}
-            className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+            className="absolute right-0 p-1.5 hover:bg-gray-100 rounded-full transition-colors z-10"
           >
             <X className="w-6 h-6 text-[#4b5563]" />
           </button>
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-grow overflow-y-auto no-scrollbar space-y-6 pb-20">
+        <div className="flex-grow overflow-y-auto no-scrollbar space-y-6 pb-2">
           
           {/* Slider Section */}
           <div className="flex flex-col items-center">
             {/* Box Image Placeholder */}
-            <div className="w-full relative h-[180px] bg-[#d3b878] rounded-xl flex items-center justify-center p-4 mb-3 overflow-hidden shadow-inner">
-               <div className="absolute inset-x-0 w-[200%] flex transition-transform duration-300 ease-in-out" style={{ transform: `translateX(-${currentSlide * 50}%)` }}>
-                 <div className="w-1/2 shrink-0 flex items-center justify-center font-bold text-[#1a1a1a] opacity-50">
-                   [ẢNH CÀ VẸT MỚI]
+            <div 
+              className="w-full relative aspect-[1600/995] bg-[#d3b878] rounded-xl flex items-center justify-center mb-3 overflow-hidden shadow-inner touch-pan-y"
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEndHandler}
+            >
+               <div className="absolute inset-y-0 inset-x-0 w-[200%] flex transition-transform duration-300 ease-in-out" style={{ transform: `translateX(-${currentSlide * 50}%)` }}>
+                 <div className="w-1/2 shrink-0 flex items-center justify-center relative h-full">
+                   <Image src="/assets/ca-vet-moi.webp" alt="Mẫu cà vẹt xe mới" fill className="object-contain" />
                  </div>
-                 <div className="w-1/2 shrink-0 flex items-center justify-center font-bold text-[#1a1a1a] opacity-50">
-                   [ẢNH CÀ VẸT CŨ]
+                 <div className="w-1/2 shrink-0 flex items-center justify-center relative h-full">
+                   <Image src="/assets/ca-vet-cu.webp" alt="Mẫu cà vẹt xe cũ" fill className="object-contain" />
                  </div>
                </div>
                
-               {/* Nút bấm chuyển slide ẩn 2 bên */}
-               <button onClick={() => setCurrentSlide(0)} className="absolute left-0 w-1/4 h-full z-10" />
-               <button onClick={() => setCurrentSlide(1)} className="absolute right-0 w-1/4 h-full z-10" />
+               {/* Nút bấm chuyển slide hiện hình */}
+               <button 
+                 onClick={() => setCurrentSlide(0)} 
+                 className={`absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 shadow-sm flex items-center justify-center z-10 transition-opacity duration-300 ${currentSlide === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:bg-white'}`}
+               >
+                 <ChevronLeft className="w-5 h-5 text-[#1a1a1a]" />
+               </button>
+               
+               <button 
+                 onClick={() => setCurrentSlide(1)} 
+                 className={`absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 shadow-sm flex items-center justify-center z-10 transition-opacity duration-300 ${currentSlide === 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:bg-white'}`}
+               >
+                 <ChevronRight className="w-5 h-5 text-[#1a1a1a]" />
+               </button>
             </div>
 
             <span className="text-[13px] text-[#4b5563] mb-3">{slides[currentSlide]}</span>
@@ -99,7 +145,7 @@ export default function GuideModal({ isOpen, onClose }: GuideModalProps) {
         </div>
         
         {/* Sticky Button bottom */}
-        <div className="absolute bottom-4 left-4 right-4 bg-white pt-2">
+        <div className="shrink-0 pt-4 bg-white">
           <button 
             onClick={onClose}
             className="w-full bg-[#0253af] text-white font-bold py-3.5 rounded-xl text-[16px] hover:bg-blue-800 transition-colors"

@@ -5,14 +5,13 @@ import Header from '@/components/ui/Header';
 import ProgressBar from '@/components/ui/ProgressBar';
 import HeroBanner from '@/components/insurance/HeroBanner';
 import DurationCard from '@/components/insurance/DurationCard';
-import VoluntaryCard from '@/components/insurance/VoluntaryCard';
 import VehicleTypeSelector from '@/components/insurance/VehicleTypeSelector';
 import CertInfoModal from '@/components/modals/CertInfoModal';
 import GuideModal from '@/components/modals/GuideModal';
 import BenefitModal from '@/components/modals/BenefitModal';
 import InsurerDetailModal from '@/components/modals/InsurerDetailModal';
 import FloatingInput from '@/components/insurance/FloatingInput';
-import ProviderGrid from '@/components/insurance/ProviderGrid';
+import ProviderInfo from '@/components/insurance/ProviderInfo';
 import ConfirmSummary from '@/components/insurance/ConfirmSummary';
 import SuccessCard from '@/components/insurance/SuccessCard';
 import StickyFooter from '@/components/ui/StickyFooter';
@@ -136,6 +135,7 @@ export default function Home() {
               <HeroBanner 
                 onOpenBenefit={() => setIsBenefitModalOpen(true)} 
                 isVoluntaryIncluded={formData.isVoluntaryIncluded}
+                onToggleVoluntary={(val) => updateField('isVoluntaryIncluded', val as any)}
               />
               
               <DurationCard 
@@ -147,17 +147,12 @@ export default function Home() {
             setEndDate={(val) => updateField('endDate', val)}
           />
           
-          <VoluntaryCard 
-            isIncluded={formData.isVoluntaryIncluded}
-            onToggle={(val) => updateField('isVoluntaryIncluded', val as any)}
-          />
-          
           {/* Card Nhập Form Chính */}
-          <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col gap-y-4 mb-4">
-            <h3 className="font-bold text-[#1a1a1a] text-[16px] mb-2">Thông tin xe</h3>
+          <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col gap-4">
+            <h3 className="font-bold text-[#1a1a1a] text-[16px]">Thông tin xe</h3>
             
             <FloatingInput 
-              label="Tên chủ xe" 
+              label="Tên chủ xe *" 
               placeholder="VD: Nguyễn Văn A"
               value={formData.ownerName} 
               onChange={(val) => { updateField('ownerName', val); if (errors.ownerName) setErrors({...errors, ownerName: ''}); }} 
@@ -165,7 +160,7 @@ export default function Home() {
             />
             
             <FloatingInput 
-              label="Địa chỉ thường trú" 
+              label="Địa chỉ thường trú *" 
               placeholder="Số nhà, tên đường, phường/xã..."
               value={formData.address} 
               onChange={(val) => { updateField('address', val); if (errors.address) setErrors({...errors, address: ''}); }} 
@@ -178,7 +173,7 @@ export default function Home() {
             />
             
             <FloatingInput 
-              label="Biển số xe" 
+              label="Biển số xe *" 
               placeholder="VD: 59P2-12345"
               uppercase={true}
               value={formData.licensePlate} 
@@ -187,7 +182,7 @@ export default function Home() {
             />
 
             <FloatingInput 
-              label="Số máy" 
+              label="Số máy *" 
               placeholder="Nhập số máy"
               uppercase={true}
               value={formData.engineNumber} 
@@ -196,7 +191,7 @@ export default function Home() {
             />
 
             <FloatingInput 
-              label="Số khung" 
+              label="Số khung *" 
               placeholder="Nhập số khung"
               uppercase={true}
               value={formData.chassisNumber} 
@@ -207,16 +202,21 @@ export default function Home() {
             <button 
               type="button" 
               onClick={() => setIsGuideModalOpen(true)}
-              className="mt-1 text-[#0253af] text-[13px] font-bold text-left hover:underline select-none w-fit outline-none"
+              className="text-[#0253af] text-[13px] font-bold text-left hover:underline select-none w-fit outline-none"
             >
               Cách tìm số khung, số máy
             </button>
           </div>
 
-          <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col gap-y-4 mb-4">
-            <h3 className="font-bold text-[#1a1a1a] text-[16px] mb-2">Người nhận giấy chứng nhận</h3>
+          <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <h3 className="font-bold text-[#1a1a1a] text-[16px]">Người nhận giấy chứng nhận</h3>
+              <p className="text-[13.5px] text-[#4b5563] leading-relaxed pr-1">
+                Vui lòng điền chính xác thông tin liên lạc đang sử dụng. Giấy chứng nhận bảo hiểm điện tử sẽ được tự động gửi vào Email / Zalo ngay sau khi thanh toán.
+              </p>
+            </div>
             <FloatingInput 
-              label="Email" 
+              label="Email *" 
               type="email"
               placeholder="VD: example@gmail.com"
               value={formData.email} 
@@ -224,7 +224,7 @@ export default function Home() {
               error={errors.email}
             />
             <FloatingInput 
-              label="Số điện thoại" 
+              label="Số điện thoại *" 
               type="tel"
               placeholder="Nhập số điện thoại"
               value={formData.phone} 
@@ -235,17 +235,15 @@ export default function Home() {
             <button 
               type="button" 
               onClick={() => setIsCertModalOpen(true)}
-              className="mt-1 text-[#0253af] text-[13px] font-bold text-left hover:underline select-none w-fit outline-none"
+              className="text-[#0253af] text-[13px] font-bold text-left hover:underline select-none w-fit outline-none"
             >
               Giấy chứng nhận điện tử là gì?
             </button>
           </div>
 
-              <ProviderGrid 
-                selectedProvider={formData.provider} 
-                onSelect={(id) => updateField('provider', id)} 
-                onViewDetail={(id) => {
-                  setViewedInsurerId(id);
+              <ProviderInfo 
+                onViewDetail={() => {
+                  setViewedInsurerId('dbv');
                   setIsInsurerModalOpen(true);
                 }}
               />

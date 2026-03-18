@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { X, Trophy, Info } from 'lucide-react';
 
 interface InsurerDetailModalProps {
@@ -19,40 +20,6 @@ const PROVIDER_DATA: Record<string, { title: string, bg: string, text: string, i
       'Năng lực tài chính xuất sắc, bệ phóng từ tập đoàn DB Insurance hạng AA+ (AM Best).',
       'Ứng dụng AI và Big Data tối ưu hóa quy trình khai báo, giám định và bồi thường.',
       'Mục tiêu trở thành công ty có tốc độ bồi thường nhanh nhất thị trường.'
-    ]
-  },
-  mic: {
-    title: 'MIC (Tổng Công ty Cổ phần Bảo hiểm Quân Đội)',
-    bg: 'bg-green-100',
-    text: 'text-green-700',
-    info: 'Thành lập từ năm 2007 trực thuộc Bộ Quốc phòng, MIC là một trong những doanh nghiệp bảo hiểm phi nhân thọ hàng đầu với 66 công ty thành viên, 456 phòng kinh doanh.',
-    achievements: [
-      'Top 6 doanh nghiệp bảo hiểm tốt nhất, Top 5 uy tín nhất Việt Nam.',
-      'Doanh nghiệp chuyển đổi số xuất sắc 2024, sở hữu siêu ứng dụng MIC Pro.',
-      'Doanh thu tăng trưởng liên tục trên 40% nhiều năm liền.'
-    ]
-  },
-  pvi: {
-    title: 'Bảo hiểm PVI',
-    bg: 'bg-red-100',
-    text: 'text-red-700',
-    info: 'Doanh nghiệp dẫn đầu thị trường bảo hiểm phi nhân thọ tại Việt Nam, sở hữu nền tảng quản trị rủi ro chuyên nghiệp chuẩn quốc tế và mạng lưới rộng khắp.',
-    achievements: [
-      '4 năm liên tiếp chiếm lĩnh thị phần số 1 tại Việt Nam về doanh thu gốc.',
-      'Doanh nghiệp đầu tiên và duy nhất vượt mốc doanh thu 20.000 tỷ đồng (2024).',
-      'Được AM Best xếp hạng năng lực tài chính ở mức "A-" (Excellent).',
-      'Đạt danh hiệu "Doanh nghiệp bảo hiểm phi nhân thọ của năm" tại IAN Awards 2025.'
-    ]
-  },
-  tci: {
-    title: 'TechcomInsurance (Công ty CP Bảo hiểm Techcom)',
-    bg: 'bg-orange-100',
-    text: 'text-orange-700',
-    info: 'Là tân binh tiềm năng trên thị trường, thuộc hệ sinh thái tài chính cao cấp của Techcombank, được cấp phép vào tháng 10/2024.',
-    achievements: [
-      'Khởi đầu mạnh mẽ nhờ thừa hưởng tệp khách hàng cao cấp từ ngân hàng mẹ.',
-      'Định hướng phát triển trở thành công ty kiến tạo nền tảng số bảo hiểm cực kỳ mượt mà.',
-      'Dấu ấn mạnh mẽ trong các hoạt động cộng đồng, tài trợ giải Techcombank Marathon.'
     ]
   }
 };
@@ -88,8 +55,18 @@ export default function InsurerDetailModal({ isOpen, onClose, insurerId }: Insur
         {/* Scrollable Content */}
         <div className="flex-grow overflow-y-auto no-scrollbar space-y-6 pb-6 pr-1">
           {/* Header Banner */}
-          <div className={`w-full rounded-[16px] ${data.bg} p-4 flex items-center justify-center min-h-[100px]`}>
-            <span className={`font-bold text-[24px] ${data.text}`}>{insurerId.toUpperCase()}</span>
+          <div className={`w-full rounded-[16px] ${data.bg} p-4 flex items-center justify-center min-h-[100px] relative overflow-hidden`}>
+            {insurerId === 'dbv' ? (
+              <Image 
+                src="/assets/dbv-logo-ngang.svg" 
+                alt="DBV Insurance Banner Logo" 
+                width={240} 
+                height={80} 
+                className="object-contain"
+              />
+            ) : (
+              <span className={`font-bold text-[24px] ${data.text}`}>{insurerId.toUpperCase()}</span>
+            )}
           </div>
           
           <h3 className="font-bold text-[16px] text-[#1a1a1a] text-center px-2">{data.title}</h3>

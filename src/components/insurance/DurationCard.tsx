@@ -33,10 +33,10 @@ export default function DurationCard({
   }, [startDate, duration]);
 
   return (
-    <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col gap-y-4 mb-4">
-      <h3 className="font-bold text-[#1a1a1a] text-[16px] mb-2">Thời hạn bảo hiểm</h3>
+    <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col gap-4">
+      <h3 className="font-bold text-[#1a1a1a] text-[16px]">Thời hạn bảo hiểm</h3>
       
-      <div className="flex gap-6 mb-2">
+      <div className="flex justify-between items-center w-full mb-2 px-1">
         {[1, 2, 3].map((years) => (
           <label key={years} className="flex items-center gap-2 cursor-pointer group">
             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${duration === years ? 'border-[#0253af]' : 'border-gray-300'}`}>

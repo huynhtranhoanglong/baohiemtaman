@@ -1,17 +1,26 @@
 import React from 'react';
+import Image from 'next/image';
 import { Shield, ChevronRight } from 'lucide-react';
 
 interface HeroBannerProps {
   onOpenBenefit: () => void;
   isVoluntaryIncluded: boolean;
+  onToggleVoluntary: (val: boolean) => void;
 }
 
-export default function HeroBanner({ onOpenBenefit, isVoluntaryIncluded }: HeroBannerProps) {
+export default function HeroBanner({ onOpenBenefit, isVoluntaryIncluded, onToggleVoluntary }: HeroBannerProps) {
   return (
-    <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 w-full mb-4">
-      {/* Box Illustration Placeholder */}
-      <div className="w-full h-[120px] bg-[#f4f5f7] rounded-[10px] flex items-center justify-center mb-4">
-        <span className="text-[#9ca3af] text-sm">Illustration Placeholder</span>
+    <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 w-full">
+      {/* Hero Image Banner */}
+      <div className="w-full rounded-[10px] overflow-hidden mb-4 relative flex items-center justify-center bg-[#f4f5f7]">
+        <Image 
+          src="/assets/main-banner.webp" 
+          alt="Tam An Insurance Banner" 
+          width={1200}
+          height={600}
+          priority
+          className="w-full h-auto object-contain"
+        />
       </div>
 
       <button 
@@ -42,6 +51,26 @@ export default function HeroBanner({ onOpenBenefit, isVoluntaryIncluded }: HeroB
             <span className="font-semibold text-gray-400">Không bao gồm</span>
           )}
         </div>
+      </div>
+
+      <div className="w-full h-px bg-gray-200 mt-4 mb-3"></div>
+
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col">
+          <h3 className="font-bold text-[#1a1a1a] text-[15px]">Bảo hiểm xe máy tự nguyện</h3>
+          <span className="text-[14px] text-[#0253af] font-semibold mt-0.5">20.000đ/năm</span>
+        </div>
+
+        {/* Toggle Switch */}
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            className="sr-only peer"
+            checked={isVoluntaryIncluded}
+            onChange={(e) => onToggleVoluntary(e.target.checked)}
+          />
+          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0253af]"></div>
+        </label>
       </div>
     </div>
   );

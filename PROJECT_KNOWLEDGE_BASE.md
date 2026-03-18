@@ -10,7 +10,7 @@
   - **Motorcycles over 50cc**: Compulsory (66k/1yr, 132k/2yrs, 198k/3yrs). Compulsory + Voluntary combo (86k/1yr, 172k/2yrs, 258k/3yrs).
   - **Motorcycles under 50cc**: Compulsory (60.5k/1yr, 121k/2yrs, 181.5k/3yrs). Compulsory + Voluntary combo (80.5k/1yr, 161k/2yrs, 241.5k/3yrs).
   - **Electric motorcycles**: Compulsory (60.5k/1yr, 121k/2yrs, 181.5k/3yrs). Compulsory + Voluntary combo (80.5k/1yr, 161k/2yrs, 241.5k/3yrs).
-- **Insurance Provider / Partner**: Global Care (intermediary) distributing policies from 4 specific providers: MIC, DBV Insurance, PVI Insurance, and TechcomInsurance. Customers can choose any of these 4 providers when purchasing. See `INSURANCE_PROVIDERS.md` for details on each partner.
+- **Insurance Provider / Partner**: Global Care (intermediary) distributing policies from a specific provider: DBV Insurance. Customers will have this provider by default when purchasing. See `INSURANCE_PROVIDERS.md` for details on this partner.
 - **Unit Economics**: Commission varies depending on the specific product and chosen insurance provider, ranging from 25,000 VND to 50,000 VND per unit. The core optimization metric is to keep Customer Acquisition Cost (CAC / CPA) below this varied commission margin.
 - **Target Audience**: Young demographic (familiar with online payments) with interests related to traffic laws, motorcycles, and related topics. The targeting strategy will heavily involve A/B testing different interests to optimize Conversion Rate (CR) and Cost Per Action (CPA).
 - **Fulfillment**: The administrator logs into the Global Care app to input collected customer details. The Global Care system automatically handles sending the payment email and Final E-certificate to the customer, while recording commission for the Admin.

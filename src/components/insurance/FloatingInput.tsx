@@ -29,6 +29,27 @@ export default function FloatingInput({ label, value, onChange, type = 'text', p
     onChange(val);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Tìm container chứa toàn bộ form, thường là main div
+      const container = e.currentTarget.closest('main') || document.body;
+      if (container) {
+        const inputs = Array.from(
+          container.querySelectorAll('input:not([type="hidden"]):not([disabled])')
+        ) as HTMLInputElement[];
+        
+        const index = inputs.indexOf(e.currentTarget);
+        if (index > -1 && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        } else {
+          // Nếu là ô cuối cùng thì hạ bàn phím xuống
+          e.currentTarget.blur();
+        }
+      }
+    }
+  };
+
   return (
     <div className="relative pt-2 w-full">
       {/* Label Box */}
@@ -46,9 +67,11 @@ export default function FloatingInput({ label, value, onChange, type = 'text', p
           type={type}
           value={value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           placeholder={shrink ? placeholder : label} 
+          enterKeyHint="next"
           // Chỉ hiện placeholder thật khi label đã floating thu nhỏ lên trên
           className={`w-full px-4 py-[14px] text-[15px] font-medium text-[#1a1a1a] !outline-none rounded-[12px] bg-transparent placeholder-gray-400 ${error ? 'border-red-500' : ''}`}
         />

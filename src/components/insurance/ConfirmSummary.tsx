@@ -20,10 +20,7 @@ interface ConfirmSummaryProps {
 export default function ConfirmSummary({ formData, onEdit }: ConfirmSummaryProps) {
   // Helpers hiển thị Tên Hãng, Ngày, Loại xe
   const providerNames: Record<string, string> = {
-    dbv: 'DBV Insurance',
-    mic: 'Bảo hiểm Quân Đội (MIC)',
-    pvi: 'Bảo hiểm PVI',
-    tci: 'TechcomInsurance (TCI)'
+    dbv: 'DBV Insurance'
   };
   
   const vehicleLabels: Record<string, string> = {

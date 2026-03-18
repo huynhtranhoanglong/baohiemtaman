@@ -26,11 +26,11 @@ export default function BenefitModal({ isOpen, onClose }: BenefitModalProps) {
         {/* Grabber line */}
         <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4 shrink-0" />
 
-        <div className="flex justify-between items-center mb-2 shrink-0">
-          <h2 className="text-[18px] font-bold text-[#1a1a1a]">Tóm tắt quyền lợi bảo hiểm</h2>
+        <div className="relative flex justify-center items-center mb-2 shrink-0">
+          <h2 className="text-[18px] font-bold text-[#1a1a1a] text-center">Tóm tắt quyền lợi bảo hiểm</h2>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+            className="absolute right-0 p-1.5 hover:bg-gray-100 rounded-full transition-colors"
           >
             <X className="w-6 h-6 text-[#4b5563]" />
           </button>
@@ -38,20 +38,22 @@ export default function BenefitModal({ isOpen, onClose }: BenefitModalProps) {
 
         {/* Scrollable Content */}
         <div className="flex-grow overflow-y-auto no-scrollbar space-y-4 pb-16">
-          <div className="text-center mb-6 mt-2">
-            <h3 className="text-[20px] font-bold text-[#1a1a1a] mb-1">Phạm vi bảo hiểm</h3>
-            <p className="text-[14px] text-[#4b5563]">Hiểu đúng quyền lợi để được bảo vệ trọn vẹn</p>
-          </div>
-
-          <div className="w-full flex justify-center mb-6">
-            <div className="w-[200px] h-[140px] bg-blue-50 rounded-2xl flex items-center justify-center">
-              <span className="text-sm text-blue-300 italic font-mono">[ẢNH MINH HỌA QUYỀN LỢI]</span>
+          
+          {/* Hero Banner Section */}
+          <div className="w-full flex justify-center mb-4 mt-2">
+            <div className="w-full bg-transparent rounded-[16px] py-4 px-2 flex flex-col items-center justify-center">
+              <h3 className="text-[22px] sm:text-[24px] font-extrabold text-[#1a1a1a] text-center mb-1.5 leading-tight">
+                Bảo hiểm <span className="text-primary">Xe máy</span>
+              </h3>
+              <p className="text-[14px] sm:text-[15px] font-semibold text-[#4b5563] text-center">
+                Cùng Bảo hiểm Tâm An tuân thủ luật giao thông
+              </p>
             </div>
           </div>
 
           {/* ================= PHẦN 1: COMBO (BẮT BUỘC + TỰ NGUYỆN) ================= */}
           <div className="mb-6">
-            <h4 className="text-[15px] font-bold text-[#1a1a1a] mb-3 pb-1 border-b-2 border-primary inline-block uppercase tracking-wide">
+            <h4 className="w-full text-center text-[15px] font-bold text-[#1a1a1a] mb-3 uppercase tracking-wide">
               Khi mua Combo (Bắt buộc + Tự nguyện)
             </h4>
 
@@ -97,11 +99,11 @@ export default function BenefitModal({ isOpen, onClose }: BenefitModalProps) {
             </div>
           </div>
 
-          <div className="w-full h-px bg-gray-200 my-6"></div>
+
 
           {/* ================= PHẦN 2: CHỈ MUA BẮT BUỘC ================= */}
           <div className="mb-6">
-            <h4 className="text-[15px] font-bold text-[#1a1a1a] mb-3 pb-1 border-b-2 border-gray-400 inline-block uppercase tracking-wide text-gray-500">
+            <h4 className="w-full text-center text-[15px] font-bold text-[#1a1a1a] mb-3 uppercase tracking-wide">
               Nếu chỉ mua Bảo hiểm bắt buộc
             </h4>
 
@@ -177,10 +179,15 @@ export default function BenefitModal({ isOpen, onClose }: BenefitModalProps) {
           </div>
 
           {/* Note mỏng màu đỏ */}
-          <div className="flex items-center gap-2 mt-4 cursor-pointer hover:underline text-primary px-1">
-            <div className="w-[18px] h-[18px] rounded-full border border-primary flex items-center justify-center font-bold text-[12px]">i</div>
+          <a 
+             href="https://cdn.globalcare.vn/private/document/pdf/tndsbb-xe-may/NGHI_DINH_VE_BHBB_TNDS_CUA_CHU_XE_CO_GIOI.pdf"
+             target="_blank"
+             rel="noopener noreferrer"
+             className="flex items-center gap-2 mt-4 cursor-pointer hover:underline text-primary px-1"
+          >
+            <div className="w-[18px] h-[18px] rounded-full border border-primary flex items-center justify-center font-bold text-[12px] shrink-0">i</div>
             <span className="font-bold text-[14px]">Xem chi tiết bản quy tắc bồi thường</span>
-          </div>
+          </a>
         </div>
       </div>
     </div>
