@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { trackEvent } from '@/utils/tracking';
 import Header from '@/components/ui/Header';
 import ProgressBar from '@/components/ui/ProgressBar';
 import HeroBanner from '@/components/insurance/HeroBanner';
@@ -46,6 +47,12 @@ export default function Home() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  useEffect(() => {
+    if (currentStep === 1) trackEvent('view_landing_page');
+    else if (currentStep === 2) trackEvent('view_summary');
+    else if (currentStep === 3) trackEvent('view_success');
+  }, [currentStep]);
+
   const validateStep1 = useCallback(() => {
     const newErrors: Record<string, string> = {};
     const { ownerName, address, licensePlate, engineNumber, chassisNumber, email, phone } = formData;
@@ -83,6 +90,7 @@ export default function Home() {
 
   // Hàm Reset Mua Xe Khác
   const handleBuyAnother = useCallback(() => {
+    trackEvent('buy_another');
     const end = new Date(today);
     end.setFullYear(end.getFullYear() + 1);
     setFormData({
@@ -97,6 +105,7 @@ export default function Home() {
   const handleAction = useCallback(async () => {
     if (currentStep === 1) {
       if (validateStep1()) {
+        trackEvent('begin_checkout', { value: totalPrice, currency: 'VND', items: [{ item_name: 'Bảo hiểm xe máy', item_category: formData.vehicleType }] });
         setCurrentStep(2);
         window.scrollTo(0, 0);
       }
@@ -122,6 +131,7 @@ export default function Home() {
           alert('Lỗi gửi API Sheets (thiếu .env), nhưng vẫn chuyển thử trang Thành Công!');
         }
         
+        trackEvent('purchase', { value: totalPrice, currency: 'VND', items: [{ item_name: 'Bảo hiểm xe máy', item_category: formData.vehicleType }] });
         setCurrentStep(3);
       } catch (error) {
         console.error('Fetch error:', error);
@@ -169,6 +179,7 @@ export default function Home() {
             
             {/* Tích hợp OCR Uploader */}
             <OcrUploader onOcrSuccess={(data) => {
+               trackEvent('ocr_success');
                setFormData(prev => ({
                  ...prev,
                  ownerName: data.ownerName || prev.ownerName,
