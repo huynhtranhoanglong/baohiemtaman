@@ -14,6 +14,7 @@ import ConfirmSummary from '@/components/insurance/ConfirmSummary';
 import SuccessCard from '@/components/insurance/SuccessCard';
 import OcrUploader from '@/components/insurance/OcrUploader';
 import StickyFooter from '@/components/ui/StickyFooter';
+import Footer from '@/components/ui/Footer';
 import {
   PRICING, VEHICLE_TYPE_IDS, PROVIDER_IDS,
   DEFAULT_FORM_DATA, EMAIL_REGEX, PHONE_REGEX,
@@ -312,6 +313,8 @@ export default function Home() {
           )}
 
         </main>
+
+        <Footer />
 
         {/* Sticky footer bị giấu ở trang 3 */}
         {!isStep3 && (
