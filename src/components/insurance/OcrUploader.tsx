@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Upload, Loader2, CheckCircle2 } from 'lucide-react';
+import { Camera, Upload, Loader2, CheckCircle2, ImageIcon } from 'lucide-react';
 
 interface OcrUploaderProps {
   onOcrSuccess: (data: {
@@ -15,6 +15,7 @@ export default function OcrUploader({ onOcrSuccess }: OcrUploaderProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -68,24 +69,27 @@ export default function OcrUploader({ onOcrSuccess }: OcrUploaderProps) {
     }
     
     // Reset file input để có thể chọn lại cùng 1 file
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (galleryInputRef.current) galleryInputRef.current.value = '';
   };
 
   return (
     <div 
-      className={`w-full border border-dashed rounded-[12px] p-4 flex flex-col items-center justify-center gap-3 transition-colors cursor-pointer select-none
-        ${success ? 'bg-green-50 border-green-300' : 'bg-[#f4f5f7] border-gray-300 hover:bg-gray-50'}`}
-      onClick={() => {
-        if (!loading) fileInputRef.current?.click();
-      }}
+      className={`w-full border border-dashed rounded-[12px] p-4 flex flex-col items-center justify-center gap-3 transition-colors select-none
+        ${success ? 'bg-green-50 border-green-300' : 'bg-[#f4f5f7] border-gray-300'}`}
     >
       <input 
         type="file" 
         accept="image/*" 
         capture="environment" // Gọi trực tiếp camera sau trên Mobile (nếu hỗ trợ)
         ref={fileInputRef} 
+        onChange={handleFileChange} 
+        className="hidden" 
+      />
+      <input 
+        type="file" 
+        accept="image/*" 
+        ref={galleryInputRef} 
         onChange={handleFileChange} 
         className="hidden" 
       />
@@ -104,13 +108,38 @@ export default function OcrUploader({ onOcrSuccess }: OcrUploaderProps) {
         </div>
       ) : (
         <>
-          <div className="flex gap-4">
-            <div className="w-11 h-11 bg-white rounded-full shadow-sm flex items-center justify-center border border-gray-100">
-              <Camera className="w-5 h-5 text-[#0253af]" />
-            </div>
+          <div className="text-center mt-2 mb-1">
+            <p className="text-[14px] font-bold text-[#1a1a1a]">Cung cấp Đăng ký xe (Cavet)</p>
           </div>
-          <div className="text-center">
-            <p className="text-[14px] font-bold text-[#1a1a1a] mb-0.5">Chụp ảnh Đăng ký xe (Cavet)</p>
+          
+          <div className="flex gap-8 items-center bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-100">
+            {/* Nút chụp ảnh (bật camera) */}
+            <button 
+              type="button"
+              onClick={() => { if (!loading) fileInputRef.current?.click(); }}
+              className="flex flex-col items-center justify-center gap-2 hover:opacity-80 transition-opacity"
+            >
+              <div className="w-12 h-12 bg-blue-50/50 rounded-full flex items-center justify-center">
+                <Camera className="w-5 h-5 text-[#0253af]" />
+              </div>
+              <span className="text-[13px] font-medium text-[#1a1a1a]">Chụp ảnh</span>
+            </button>
+
+            <div className="w-[1px] h-10 bg-gray-200"></div>
+
+            {/* Nút tải ảnh lên từ thư viện */}
+            <button 
+              type="button"
+              onClick={() => { if (!loading) galleryInputRef.current?.click(); }}
+              className="flex flex-col items-center justify-center gap-2 hover:opacity-80 transition-opacity"
+            >
+              <div className="w-12 h-12 bg-blue-50/50 rounded-full flex items-center justify-center">
+                <ImageIcon className="w-5 h-5 text-[#0253af]" />
+              </div>
+              <span className="text-[13px] font-medium text-[#1a1a1a]">Nhập từ máy</span>
+            </button>
+          </div>
+          <div className="text-center mt-1">
             <p className="text-[12.5px] text-[#4b5563]">Hệ thống sẽ tự động bóc tách & điền giúp bạn</p>
           </div>
         </>
