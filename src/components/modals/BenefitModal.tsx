@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { X, CheckCircle2, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
-import { BENEFITS, EXTERNAL_URLS } from '@/constants';
+import { BENEFITS, EXTERNAL_URLS, PROJECT_INFO } from '@/constants';
 
 interface BenefitModalProps {
   isOpen: boolean;
@@ -47,7 +47,7 @@ export default function BenefitModal({ isOpen, onClose }: BenefitModalProps) {
                 Bảo hiểm <span className="text-primary">Xe máy</span>
               </h3>
               <p className="text-[14px] sm:text-[15px] font-semibold text-[#4b5563] text-center">
-                Cùng Bảo hiểm Tâm An tuân thủ luật giao thông
+                Cùng {PROJECT_INFO.BRAND_NAME} tuân thủ luật giao thông
               </p>
             </div>
           </div>

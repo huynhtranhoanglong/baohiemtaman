@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle2, ChevronRight, Download, Home } from 'lucide-react';
+import { PROJECT_INFO } from '@/constants';
 
 interface SuccessCardProps {
   email: string;
@@ -23,7 +24,7 @@ export default function SuccessCard({ email, onBuyAnother, onGoHome }: SuccessCa
 
           <h2 className="text-[22px] font-bold text-[#1a1a1a] mb-2">Đăng ký thành công!</h2>
           <p className="text-[14px] text-[#4b5563] mb-6 px-2 leading-relaxed">
-            Cảm ơn bạn đã tin dùng Bảo hiểm Tâm An. Vui lòng kiểm tra email <span className="font-bold text-[#0253af]">{email || 'của bạn'}</span> để nhận thông tin hướng dẫn thanh toán. Giấy chứng nhận sẽ được gửi sau khi thanh toán hoàn tất.
+            Cảm ơn bạn đã tin dùng {PROJECT_INFO.BRAND_NAME}. Vui lòng kiểm tra email <span className="font-bold text-[#0253af]">{email || 'của bạn'}</span> để nhận thông tin hướng dẫn thanh toán. Giấy chứng nhận sẽ được gửi sau khi thanh toán hoàn tất.
           </p>
         </div>
       </div>

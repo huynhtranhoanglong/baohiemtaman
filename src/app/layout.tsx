@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { PROJECT_INFO } from "@/constants";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -8,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Bảo hiểm Tâm An",
-  description: "Trang đăng ký bảo hiểm xe máy trực tuyến Tâm An.",
+  title: PROJECT_INFO.BRAND_NAME,
+  description: `Trang đăng ký bảo hiểm xe máy trực tuyến ${PROJECT_INFO.SHORT_NAME}.`,
   icons: {
     icon: "/assets/baohiemtaman-logo.svg",
   },
