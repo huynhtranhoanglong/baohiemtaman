@@ -39,3 +39,29 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# =============================================
+# OFFLINE ONLY — không push lên GitHub
+# =============================================
+
+# Ảnh tham khảo design (từ Momo)
+IMG_*.PNG
+
+# File Photoshop gốc
+*.psd
+
+# Tài liệu nghiên cứu & knowledge base (lưu offline)
+PROJECT_KNOWLEDGE_BASE.md
+UI_UX_GUIDELINES.md
+INSURANCE_PROVIDERS.md
+Vietnam Compulsory Motorcycle Insurance*.md
+
+# SVG mặc định Next.js (không dùng trong web)
+public/file.svg
+public/globe.svg
+public/next.svg
+public/vercel.svg
+public/window.svg
+
+# Agent config
+.agent/

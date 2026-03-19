@@ -3,26 +3,13 @@
 import React from 'react';
 import Image from 'next/image';
 import { X, Trophy, Info } from 'lucide-react';
+import { PROVIDER_DATA } from '@/constants';
 
 interface InsurerDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   insurerId: string | null;
 }
-
-const PROVIDER_DATA: Record<string, { title: string, bg: string, text: string, info: string, achievements: string[] }> = {
-  dbv: {
-    title: 'DBV Insurance (Tổng Công ty Cơ phần Bảo hiểm Hàng không)',
-    bg: 'bg-blue-100',
-    text: 'text-[#0253af]',
-    info: 'Tiền thân là Bảo hiểm Hàng không (VNI), chính thức đổi tên thành DBV Insurance vào tháng 5/2025 với sự hậu thuẫn tài chính mạnh mẽ từ DB Insurance Hàn Quốc (nắm giữ 75% cổ phần).',
-    achievements: [
-      'Năng lực tài chính xuất sắc, bệ phóng từ tập đoàn DB Insurance hạng AA+ (AM Best).',
-      'Ứng dụng AI và Big Data tối ưu hóa quy trình khai báo, giám định và bồi thường.',
-      'Mục tiêu trở thành công ty có tốc độ bồi thường nhanh nhất thị trường.'
-    ]
-  }
-};
 
 export default function InsurerDetailModal({ isOpen, onClose, insurerId }: InsurerDetailModalProps) {
   if (!isOpen || !insurerId || !PROVIDER_DATA[insurerId]) return null;
@@ -56,10 +43,10 @@ export default function InsurerDetailModal({ isOpen, onClose, insurerId }: Insur
         <div className="flex-grow overflow-y-auto no-scrollbar space-y-6 pb-6 pr-1">
           {/* Header Banner */}
           <div className={`w-full rounded-[16px] ${data.bg} p-4 flex items-center justify-center min-h-[100px] relative overflow-hidden`}>
-            {insurerId === 'dbv' ? (
+            {insurerId === 'dbv' && data.logo ? (
               <Image 
-                src="/assets/dbv-logo-ngang.svg" 
-                alt="DBV Insurance Banner Logo" 
+                src={data.logo}
+                alt={`${data.title} Logo`}
                 width={240} 
                 height={80} 
                 className="object-contain"

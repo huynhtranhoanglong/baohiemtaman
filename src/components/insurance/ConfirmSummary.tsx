@@ -1,4 +1,5 @@
 import React from 'react';
+import { PROVIDER_NAMES, VEHICLE_LABELS } from '@/constants';
 
 interface ConfirmSummaryProps {
   formData: {
@@ -18,17 +19,6 @@ interface ConfirmSummaryProps {
 }
 
 export default function ConfirmSummary({ formData, onEdit }: ConfirmSummaryProps) {
-  // Helpers hiển thị Tên Hãng, Ngày, Loại xe
-  const providerNames: Record<string, string> = {
-    dbv: 'DBV Insurance'
-  };
-  
-  const vehicleLabels: Record<string, string> = {
-    '>50cc': 'Xe máy trên 50cc',
-    '<=50cc': 'Xe máy dưới 50cc',
-    'electric': 'Xe máy điện'
-  };
-
   const formatDate = (ds: string) => {
     if (!ds) return '';
     const parts = ds.split('-');
@@ -59,7 +49,7 @@ export default function ConfirmSummary({ formData, onEdit }: ConfirmSummaryProps
           )}
           <div className="flex justify-between items-start text-[14px]">
             <span className="text-[#4b5563] w-1/3">Nhà bảo hiểm</span>
-            <span className="font-semibold text-[#1a1a1a] w-2/3 text-right">{providerNames[formData.provider] || 'hãng'}</span>
+            <span className="font-semibold text-[#1a1a1a] w-2/3 text-right">{PROVIDER_NAMES[formData.provider] || 'hãng'}</span>
           </div>
           <div className="flex justify-between items-center text-[14px]">
             <span className="text-[#4b5563]">Thời hạn</span>
@@ -85,7 +75,7 @@ export default function ConfirmSummary({ formData, onEdit }: ConfirmSummaryProps
         <div className="space-y-3">
           <div className="flex justify-between items-center text-[14px]">
             <span className="text-[#4b5563]">Loại xe</span>
-            <span className="font-semibold text-[#1a1a1a]">{vehicleLabels[formData.vehicleType] || 'Không rõ'}</span>
+            <span className="font-semibold text-[#1a1a1a]">{VEHICLE_LABELS[formData.vehicleType] || 'Không rõ'}</span>
           </div>
           <div className="flex justify-between items-center text-[14px]">
             <span className="text-[#4b5563]">Biển số xe</span>

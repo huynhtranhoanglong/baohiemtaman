@@ -10,6 +10,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Bảo hiểm Tâm An",
   description: "Trang đăng ký bảo hiểm xe máy trực tuyến Tâm An.",
+  icons: {
+    icon: "/assets/baohiemtaman-logo.svg",
+  },
 };
 
 export default function RootLayout({

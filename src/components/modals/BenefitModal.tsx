@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { X, CheckCircle2, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { BENEFITS, EXTERNAL_URLS } from '@/constants';
 
 interface BenefitModalProps {
   isOpen: boolean;
@@ -67,11 +68,11 @@ export default function BenefitModal({ isOpen, onClose }: BenefitModalProps) {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-[13px]">
                     <span className="text-[#4b5563]">Về người</span>
-                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">Tối đa 150 triệu /người/vụ</span>
+                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">{BENEFITS.VICTIM_PERSON}</span>
                   </div>
                   <div className="flex justify-between items-center text-[13px]">
                     <span className="text-[#4b5563]">Về tài sản</span>
-                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">Tối đa 50 triệu /vụ</span>
+                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">{BENEFITS.VICTIM_PROPERTY}</span>
                   </div>
                 </div>
               </div>
@@ -88,11 +89,11 @@ export default function BenefitModal({ isOpen, onClose }: BenefitModalProps) {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-[13px]">
                     <span className="text-[#4b5563]">Về người</span>
-                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">Tối đa 10 triệu /người/vụ</span>
+                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">{BENEFITS.OWNER_PERSON}</span>
                   </div>
                   <div className="flex justify-between items-center text-[13px]">
                     <span className="text-[#4b5563]">Số người bảo hiểm</span>
-                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">02 người</span>
+                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">{BENEFITS.OWNER_COUNT}</span>
                   </div>
                 </div>
               </div>
@@ -117,11 +118,11 @@ export default function BenefitModal({ isOpen, onClose }: BenefitModalProps) {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-[13px]">
                     <span className="text-[#4b5563]">Về người</span>
-                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">Tối đa 150 triệu /người/vụ</span>
+                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">{BENEFITS.VICTIM_PERSON}</span>
                   </div>
                   <div className="flex justify-between items-center text-[13px]">
                     <span className="text-[#4b5563]">Về tài sản</span>
-                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">Tối đa 50 triệu /vụ</span>
+                    <span className="font-bold text-[#1a1a1a] max-w-[120px] text-right">{BENEFITS.VICTIM_PROPERTY}</span>
                   </div>
                 </div>
               </div>
@@ -180,7 +181,7 @@ export default function BenefitModal({ isOpen, onClose }: BenefitModalProps) {
 
           {/* Note mỏng màu đỏ */}
           <a 
-             href="https://cdn.globalcare.vn/private/document/pdf/tndsbb-xe-may/NGHI_DINH_VE_BHBB_TNDS_CUA_CHU_XE_CO_GIOI.pdf"
+             href={EXTERNAL_URLS.REGULATION_PDF}
              target="_blank"
              rel="noopener noreferrer"
              className="flex items-center gap-2 mt-4 cursor-pointer hover:underline text-primary px-1"

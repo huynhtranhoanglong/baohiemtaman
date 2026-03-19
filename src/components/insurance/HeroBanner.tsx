@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Shield, ChevronRight } from 'lucide-react';
+import { BENEFITS, PRICING } from '@/constants';
 
 interface HeroBannerProps {
   onOpenBenefit: () => void;
@@ -37,16 +38,16 @@ export default function HeroBanner({ onOpenBenefit, isVoluntaryIncluded, onToggl
       <div className="space-y-3">
         <div className="flex justify-between text-[14px]">
           <span className="text-[#4b5563]">Nạn nhân</span>
-          <span className="font-semibold text-[#1a1a1a]">Tối đa 150 triệu/người/vụ</span>
+          <span className="font-semibold text-[#1a1a1a]">{BENEFITS.VICTIM_PERSON}</span>
         </div>
         <div className="flex justify-between text-[14px]">
           <span className="text-[#4b5563]">Tài sản nạn nhân</span>
-          <span className="font-semibold text-[#1a1a1a]">Tối đa 50 triệu/vụ</span>
+          <span className="font-semibold text-[#1a1a1a]">{BENEFITS.VICTIM_PROPERTY}</span>
         </div>
         <div className="flex justify-between text-[14px]">
           <span className="text-[#4b5563]">Chủ xe</span>
           {isVoluntaryIncluded ? (
-            <span className="font-semibold text-primary">Tối đa 10 triệu/người/vụ (2 người)</span>
+            <span className="font-semibold text-primary">{BENEFITS.OWNER_PERSON_DETAIL}</span>
           ) : (
             <span className="font-semibold text-gray-400">Không bao gồm</span>
           )}
@@ -58,7 +59,7 @@ export default function HeroBanner({ onOpenBenefit, isVoluntaryIncluded, onToggl
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <h3 className="font-bold text-[#1a1a1a] text-[15px]">Bảo hiểm xe máy tự nguyện</h3>
-          <span className="text-[14px] text-[#0253af] font-semibold mt-0.5">20.000đ/năm</span>
+          <span className="text-[14px] text-[#0253af] font-semibold mt-0.5">{PRICING.VOLUNTARY_PER_YEAR.toLocaleString('vi-VN')}đ/năm</span>
         </div>
 
         {/* Toggle Switch */}

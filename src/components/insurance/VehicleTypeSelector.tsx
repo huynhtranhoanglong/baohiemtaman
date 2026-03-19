@@ -1,5 +1,6 @@
 import React from 'react';
 import { Gauge, Zap } from 'lucide-react';
+import { VEHICLE_TYPES } from '@/constants';
 
 const MopedIcon = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -17,17 +18,12 @@ interface VehicleTypeSelectorProps {
 }
 
 export default function VehicleTypeSelector({ selectedType, onChangeType }: VehicleTypeSelectorProps) {
-  const types = [
-    { id: '>50cc', label: 'Xe > 50cc', icon: Gauge },
-    { id: '<=50cc', label: 'Xe ≤ 50cc', icon: MopedIcon },
-    { id: 'electric', label: 'Xe máy điện', icon: Zap }
-  ];
 
   return (
     <div className="flex justify-between w-full items-center pb-1 no-scrollbar pt-2 gap-2">
-      {types.map(type => {
+      {VEHICLE_TYPES.map(type => {
         const isActive = selectedType === type.id;
-        const Icon = type.icon;
+        const Icon = type.iconName === 'Gauge' ? Gauge : type.iconName === 'Zap' ? Zap : MopedIcon;
         return (
           <button
             key={type.id}

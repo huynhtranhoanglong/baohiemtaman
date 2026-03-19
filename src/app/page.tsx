@@ -1,20 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import Header from '@/components/ui/Header';
 import ProgressBar from '@/components/ui/ProgressBar';
 import HeroBanner from '@/components/insurance/HeroBanner';
 import DurationCard from '@/components/insurance/DurationCard';
 import VehicleTypeSelector from '@/components/insurance/VehicleTypeSelector';
-import CertInfoModal from '@/components/modals/CertInfoModal';
-import GuideModal from '@/components/modals/GuideModal';
-import BenefitModal from '@/components/modals/BenefitModal';
-import InsurerDetailModal from '@/components/modals/InsurerDetailModal';
 import FloatingInput from '@/components/insurance/FloatingInput';
 import ProviderInfo from '@/components/insurance/ProviderInfo';
 import ConfirmSummary from '@/components/insurance/ConfirmSummary';
 import SuccessCard from '@/components/insurance/SuccessCard';
 import StickyFooter from '@/components/ui/StickyFooter';
+import {
+  PRICING, VEHICLE_TYPE_IDS, PROVIDER_IDS,
+  DEFAULT_FORM_DATA, EMAIL_REGEX, PHONE_REGEX,
+  VALIDATION_MESSAGES, API,
+} from '@/constants';
+
+// Lazy load modals — chỉ tải code khi user thực sự mở modal
+const CertInfoModal = dynamic(() => import('@/components/modals/CertInfoModal'), { ssr: false });
+const GuideModal = dynamic(() => import('@/components/modals/GuideModal'), { ssr: false });
+const BenefitModal = dynamic(() => import('@/components/modals/BenefitModal'), { ssr: false });
+const InsurerDetailModal = dynamic(() => import('@/components/modals/InsurerDetailModal'), { ssr: false });
+
+const TODAY = new Date().toISOString().split('T')[0];
 
 export default function Home() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -26,91 +36,100 @@ export default function Home() {
   const [viewedInsurerId, setViewedInsurerId] = useState<string | null>(null);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const today = new Date().toISOString().split('T')[0];
+  const today = TODAY;
 
   const [formData, setFormData] = useState({
-    duration: 1,
+    ...DEFAULT_FORM_DATA,
     startDate: today,
-    endDate: '',
-    vehicleType: '>50cc',
-    ownerName: '',
-    address: '',
-    licensePlate: '',
-    engineNumber: '',
-    chassisNumber: '',
-    email: '',
-    phone: '',
-    isVoluntaryIncluded: true,
-    provider: 'dbv'
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const validateStep1 = () => {
+  const validateStep1 = useCallback(() => {
     const newErrors: Record<string, string> = {};
     const { ownerName, address, licensePlate, engineNumber, chassisNumber, email, phone } = formData;
 
-    if (!ownerName.trim()) newErrors.ownerName = 'Vui lòng nhập tên chủ xe';
-    if (!address.trim()) newErrors.address = 'Vui lòng nhập địa chỉ thường trú';
-    if (!licensePlate.trim()) newErrors.licensePlate = 'Vui lòng nhập biển số xe';
-    if (!engineNumber.trim()) newErrors.engineNumber = 'Vui lòng nhập số máy';
-    if (!chassisNumber.trim()) newErrors.chassisNumber = 'Vui lòng nhập số khung';
+    if (!ownerName.trim()) newErrors.ownerName = VALIDATION_MESSAGES.ownerName;
+    if (!address.trim()) newErrors.address = VALIDATION_MESSAGES.address;
+    if (!licensePlate.trim()) newErrors.licensePlate = VALIDATION_MESSAGES.licensePlate;
+    if (!engineNumber.trim()) newErrors.engineNumber = VALIDATION_MESSAGES.engineNumber;
+    if (!chassisNumber.trim()) newErrors.chassisNumber = VALIDATION_MESSAGES.chassisNumber;
     
-    // Validate Email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.trim() || !emailRegex.test(email)) {
-      newErrors.email = 'Vui lòng nhập đúng định dạng Email';
+    if (!email.trim() || !EMAIL_REGEX.test(email)) {
+      newErrors.email = VALIDATION_MESSAGES.email;
     }
 
-    // Validate Phone (exactly 10 digits)
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phone.trim() || !phoneRegex.test(phone)) {
-      newErrors.phone = 'Vui lòng nhập đủ 10 số điện thoại';
+    if (!phone.trim() || !PHONE_REGEX.test(phone)) {
+      newErrors.phone = VALIDATION_MESSAGES.phone;
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [formData]);
 
-  const getPrice = () => {
-    let basePrice = formData.vehicleType === '>50cc' ? 66000 : 60500;
-    
-    // Nếu tham gia tự nguyện thì cộng thêm 20,000đ/năm
-    if (formData.isVoluntaryIncluded) {
-      basePrice += 20000;
-    }
-    
+  // Memoize giá — chỉ tính lại khi vehicleType, duration hoặc isVoluntaryIncluded thay đổi
+  const totalPrice = useMemo(() => {
+    let basePrice = formData.vehicleType === VEHICLE_TYPE_IDS.ABOVE_50CC
+      ? PRICING.MANDATORY_ABOVE_50CC
+      : PRICING.MANDATORY_BELOW_50CC;
+    if (formData.isVoluntaryIncluded) basePrice += PRICING.VOLUNTARY_PER_YEAR;
     return basePrice * formData.duration;
-  };
+  }, [formData.vehicleType, formData.isVoluntaryIncluded, formData.duration]);
+
+  const updateField = useCallback((field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  }, []);
 
   // Hàm Reset Mua Xe Khác
-  const handleBuyAnother = () => {
-    setFormData(prev => ({
-      ...prev,
-      duration: 1,
-      vehicleType: '>50cc',
-      licensePlate: '',
-      chassisNumber: '',
-      engineNumber: '',
-      ownerName: '',
-      address: '',
-      email: '',
-      phone: '',
-      isVoluntaryIncluded: true,
-      provider: 'dbv'
-    }));
-    // Reset lịch
-    updateField('startDate', today);
+  const handleBuyAnother = useCallback(() => {
     const end = new Date(today);
     end.setFullYear(end.getFullYear() + 1);
-    updateField('endDate', end.toISOString().split('T')[0]);
-    
+    setFormData({
+      ...DEFAULT_FORM_DATA,
+      startDate: today,
+      endDate: end.toISOString().split('T')[0],
+    });
     setCurrentStep(1);
-  };
+  }, [today]);
 
-  const updateField = (field: keyof typeof formData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  // Stable callback cho StickyFooter — không tạo lại mỗi render
+  const handleAction = useCallback(async () => {
+    if (currentStep === 1) {
+      if (validateStep1()) {
+        setCurrentStep(2);
+        window.scrollTo(0, 0);
+      }
+    } else if (currentStep === 2) {
+      if (isSubmitting) return;
+
+      setIsSubmitting(true);
+      try {
+        const payload = {
+          ...formData,
+          totalPrice,
+          createdAt: new Date().toISOString(),
+        };
+
+        const res = await fetch(API.SUBMIT_ORDER, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          console.error("Lỗi khi gửi API", await res.text());
+          alert('Lỗi gửi API Sheets (thiếu .env), nhưng vẫn chuyển thử trang Thành Công!');
+        }
+        
+        setCurrentStep(3);
+      } catch (error) {
+        console.error('Fetch error:', error);
+        alert('Lỗi mạng nội bộ.');
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  }, [currentStep, isSubmitting, formData, totalPrice, validateStep1]);
 
   // Bước 3: Hoàn tất thì giấu bớt phần tử thừa đổi Background
   const isStep3 = currentStep === 3;
@@ -243,7 +262,7 @@ export default function Home() {
 
               <ProviderInfo 
                 onViewDetail={() => {
-                  setViewedInsurerId('dbv');
+                  setViewedInsurerId(PROVIDER_IDS.DBV);
                   setIsInsurerModalOpen(true);
                 }}
               />
@@ -272,54 +291,9 @@ export default function Home() {
         {/* Sticky footer bị giấu ở trang 3 */}
         {!isStep3 && (
           <StickyFooter 
-            totalPrice={getPrice()} 
+            totalPrice={totalPrice} 
             buttonLabel={isSubmitting ? "Đang xử lý..." : (currentStep === 1 ? "Tiếp tục" : "Thanh toán")} 
-            onAction={async () => {
-              if (currentStep === 1) {
-                // Sang Bước 2: Validate sương sương rồi cho qua
-                if (validateStep1()) {
-                  setCurrentStep(2);
-                  // Scroll top to see the confirm page clearly
-                  window.scrollTo(0, 0);
-                } else {
-                  // Hiển thị lỗi nhưng nên scroll lên vị trí lỗi đầu tiên để user thấy (tuỳ chọn)
-                  // Tạm thời đơn giản nhất cứ để vậy
-                }
-              } else if (currentStep === 2) {
-                // Gọi API backend lưu spreadsheet 
-                if (isSubmitting) return;
-
-                setIsSubmitting(true);
-                try {
-                  const payload = {
-                    ...formData,
-                    totalPrice: getPrice(),
-                    createdAt: new Date().toISOString(),
-                  };
-
-                  const res = await fetch('/api/submit-order', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                  });
-
-                  if (!res.ok) {
-                    console.error("Lỗi khi gửi API", await res.text());
-                    // Báo lỗi bằng alert nếu muốn, hoặc silent & vẫn qua bước 3 (tuỳ policy)
-                    // Tạm cho qua luôn bước 3 để demo UI mượt mà:
-                    alert('Lỗi gửi API Sheets (thiếu .env), nhưng vẫn chuyển thử trang Thành Công!');
-                  }
-                  
-                  // Move to Success UI
-                  setCurrentStep(3);
-                } catch (error) {
-                  console.error('Fetch error:', error);
-                  alert('Lỗi mạng nội bộ.');
-                } finally {
-                  setIsSubmitting(false);
-                }
-              }
-            }} 
+            onAction={handleAction} 
           />
         )}
 
