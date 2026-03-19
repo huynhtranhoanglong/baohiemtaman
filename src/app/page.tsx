@@ -11,6 +11,7 @@ import FloatingInput from '@/components/insurance/FloatingInput';
 import ProviderInfo from '@/components/insurance/ProviderInfo';
 import ConfirmSummary from '@/components/insurance/ConfirmSummary';
 import SuccessCard from '@/components/insurance/SuccessCard';
+import OcrUploader from '@/components/insurance/OcrUploader';
 import StickyFooter from '@/components/ui/StickyFooter';
 import {
   PRICING, VEHICLE_TYPE_IDS, PROVIDER_IDS,
@@ -165,6 +166,23 @@ export default function Home() {
           {/* Card Nhập Form Chính */}
           <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col gap-4">
             <h3 className="font-bold text-[#1a1a1a] text-[16px]">Thông tin xe</h3>
+            
+            {/* Tích hợp OCR Uploader */}
+            <OcrUploader onOcrSuccess={(data) => {
+               setFormData(prev => ({
+                 ...prev,
+                 ownerName: data.ownerName || prev.ownerName,
+                 licensePlate: data.licensePlate || prev.licensePlate,
+                 chassisNumber: data.chassisNumber || prev.chassisNumber,
+                 engineNumber: data.engineNumber || prev.engineNumber,
+                 address: data.address || prev.address
+               }));
+               
+               // Xóa các cảnh báo lỗi nếu form đã được điền đủ do OCR
+               setErrors({});
+            }} />
+
+            <div className="w-full h-[1px] bg-gray-100 my-1" />
             
             <FloatingInput 
               label="Tên chủ xe *" 
