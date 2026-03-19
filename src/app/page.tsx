@@ -138,15 +138,11 @@ export default function Home() {
     <div className={`min-h-screen ${isStep3 ? 'bg-[#f4f5f7]' : 'bg-[#fff]'} pb-32 font-sans flex justify-center`}>
       <div className={`w-full max-w-md ${isStep3 ? '' : 'bg-[#f4f5f7]'} min-h-screen relative flex flex-col shadow-xl`}>
         
-        {/* Header & Progress (Giấu nếu đang ở trang 3) */}
-        {!isStep3 && (
-          <>
-            <Header />
-            <ProgressBar currentStep={currentStep} />
-          </>
-        )}
+        {/* Header và Progress luôn hiện */}
+        <Header />
+        <ProgressBar currentStep={currentStep} />
 
-        <main className={`flex-grow px-4 ${isStep3 ? 'pt-6' : 'space-y-4'}`}>
+        <main className={`flex-grow px-4 ${isStep3 ? 'pt-2' : 'space-y-4'}`}>
           
           {/* TRẠNG THÁI BƯỚC 1: NHẬP LIỆU */}
           {currentStep === 1 && (

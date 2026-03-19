@@ -9,7 +9,7 @@ interface SuccessCardProps {
 
 export default function SuccessCard({ email, onBuyAnother, onGoHome }: SuccessCardProps) {
   return (
-    <div className="flex flex-col items-center justify-center animate-slide-up mt-8">
+    <div className="flex flex-col items-center justify-center animate-slide-up">
       {/* Khối Card lớn chúc mừng */}
       <div className="bg-white rounded-[20px] p-6 shadow-lg border border-gray-100 max-w-sm w-full mx-auto text-center relative overflow-hidden">
         {/* Decorate Nền */}
@@ -23,7 +23,7 @@ export default function SuccessCard({ email, onBuyAnother, onGoHome }: SuccessCa
 
           <h2 className="text-[22px] font-bold text-[#1a1a1a] mb-2">Đăng ký thành công!</h2>
           <p className="text-[14px] text-[#4b5563] mb-6 px-2 leading-relaxed">
-            Cảm ơn bạn đã tin dùng Bảo hiểm Tâm An. Vui lòng kiểm tra email <span className="font-bold text-[#1a1a1a]">{email || 'của bạn'}</span> để nhận thông tin hướng dẫn thanh toán. Giấy chứng nhận sẽ được gửi sau khi thanh toán hoàn tất.
+            Cảm ơn bạn đã tin dùng Bảo hiểm Tâm An. Vui lòng kiểm tra email <span className="font-bold text-[#0253af]">{email || 'của bạn'}</span> để nhận thông tin hướng dẫn thanh toán. Giấy chứng nhận sẽ được gửi sau khi thanh toán hoàn tất.
           </p>
         </div>
       </div>

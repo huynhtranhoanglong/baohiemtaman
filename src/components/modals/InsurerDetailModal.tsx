@@ -29,11 +29,11 @@ export default function InsurerDetailModal({ isOpen, onClose, insurerId }: Insur
         {/* Grabber line */}
         <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4 shrink-0" />
 
-        <div className="flex justify-between items-center mb-6 shrink-0">
+        <div className="flex justify-center items-center mb-6 shrink-0 relative">
           <h2 className="text-[18px] font-bold text-[#1a1a1a]">Chi tiết Nhà cung cấp</h2>
           <button 
             onClick={onClose}
-            className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+            className="absolute right-0 p-1.5 hover:bg-gray-100 rounded-full transition-colors"
           >
             <X className="w-6 h-6 text-[#4b5563]" />
           </button>

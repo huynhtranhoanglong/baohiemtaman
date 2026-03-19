@@ -9,7 +9,8 @@ export default function Header() {
         <Image src="/assets/baohiemtaman-logo.svg" alt="Logo Tâm An" width={32} height={32} className="h-8 w-auto" priority />
         <h1 className="text-[18px] font-bold text-[#1a1a1a]">Bảo hiểm Tâm An</h1>
       </div>
-      <div className="flex gap-2">
+      {/* Ẩn icon support và info tạm thời cho đến khi có chức năng */}
+      <div className="hidden gap-2">
         <button className="w-8 h-8 flex items-center justify-center bg-[#f4f5f7] rounded-full hover:bg-gray-200 transition-colors">
           <Info className="w-4 h-4 text-[#4b5563]" />
         </button>
