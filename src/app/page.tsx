@@ -39,7 +39,29 @@ export default function Home() {
   const [viewedInsurerId, setViewedInsurerId] = useState<string | null>(null);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showStickyFooter, setShowStickyFooter] = useState(false);
   const today = TODAY;
+
+  useEffect(() => {
+    if (currentStep !== 1) {
+      setShowStickyFooter(true);
+      return;
+    }
+
+    const handleScroll = () => {
+      const buyBtn = document.getElementById('hero-buy-now-btn');
+      if (buyBtn) {
+        const rect = buyBtn.getBoundingClientRect();
+        // Visible when the button is scrolled out of view (bottom is less than 0, or header height like 60px)
+        setShowStickyFooter(rect.bottom < 60);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [currentStep]);
 
   const [formData, setFormData] = useState({
     ...DEFAULT_FORM_DATA,
@@ -47,6 +69,34 @@ export default function Home() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Hydrate state from sessionStorage (for returning from aux pages)
+  useEffect(() => {
+    const savedForm = sessionStorage.getItem('insurance_form_data');
+    if (savedForm) {
+      try { setFormData(JSON.parse(savedForm)); } catch(e){}
+    }
+    const savedStep = sessionStorage.getItem('insurance_current_step');
+    if (savedStep) {
+      setCurrentStep(Number(savedStep));
+    }
+    setIsHydrated(true);
+  }, []);
+
+  // Persist state to sessionStorage
+  useEffect(() => {
+    if (isHydrated) {
+      sessionStorage.setItem('insurance_form_data', JSON.stringify(formData));
+    }
+  }, [formData, isHydrated]);
+
+  useEffect(() => {
+    if (isHydrated) {
+      sessionStorage.setItem('insurance_current_step', currentStep.toString());
+    }
+  }, [currentStep, isHydrated]);
 
   useEffect(() => {
     if (currentStep === 1) trackEvent('view_landing_page');
@@ -94,6 +144,10 @@ export default function Home() {
     trackEvent('buy_another');
     const end = new Date(today);
     end.setFullYear(end.getFullYear() + 1);
+    
+    sessionStorage.removeItem('insurance_form_data');
+    sessionStorage.removeItem('insurance_current_step');
+
     setFormData({
       ...DEFAULT_FORM_DATA,
       startDate: today,
@@ -163,16 +217,21 @@ export default function Home() {
                 onOpenBenefit={() => setIsBenefitModalOpen(true)} 
                 isVoluntaryIncluded={formData.isVoluntaryIncluded}
                 onToggleVoluntary={(val) => updateField('isVoluntaryIncluded', val as any)}
+                onBuyNow={() => {
+                  document.getElementById('duration-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
               />
               
-              <DurationCard 
-            duration={formData.duration}
-            startDate={formData.startDate}
-            endDate={formData.endDate}
-            onChangeDuration={(val) => updateField('duration', val as any)}
-            onChangeStartDate={(val) => updateField('startDate', val)}
-            setEndDate={(val) => updateField('endDate', val)}
-          />
+              <div id="duration-section" className="scroll-mt-4">
+                <DurationCard 
+                  duration={formData.duration}
+                  startDate={formData.startDate}
+                  endDate={formData.endDate}
+                  onChangeDuration={(val) => updateField('duration', val as any)}
+                  onChangeStartDate={(val) => updateField('startDate', val)}
+                  setEndDate={(val) => updateField('endDate', val)}
+                />
+              </div>
           
           {/* Card Nhập Form Chính */}
           <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col gap-4">
@@ -322,6 +381,7 @@ export default function Home() {
             totalPrice={totalPrice} 
             buttonLabel={isSubmitting ? "Đang xử lý..." : (currentStep === 1 ? "Tiếp tục" : "Thanh toán")} 
             onAction={handleAction} 
+            isVisible={showStickyFooter}
           />
         )}
 

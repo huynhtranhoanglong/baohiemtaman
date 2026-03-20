@@ -1,0 +1,3 @@
+# Environment Variable Rules
+- Whenever adding or updating environment variables (like in `.env.local`), ALWAYS remind the user to also update these variables manually on their deployment platform (Vercel, Netlify, etc.).
+- For JSON-based credentials (like `google-credentials.json`), remind the user to base64-encode the JSON file content before pasting it into the Vercel variables to avoid parsing formatting errors.

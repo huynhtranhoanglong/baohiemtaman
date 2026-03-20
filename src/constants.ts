@@ -133,3 +133,33 @@ export const API = {
 export const EXTERNAL_URLS = {
   REGULATION_PDF: 'https://cdn.globalcare.vn/private/document/pdf/tndsbb-xe-may/NGHI_DINH_VE_BHBB_TNDS_CUA_CHU_XE_CO_GIOI.pdf',
 } as const;
+
+// =============================================
+// SOCIAL PROOF
+// =============================================
+export const SOCIAL_PROOF = {
+  text: 'Hơn 5,000 hợp đồng đã phát hành qua Tâm An',
+  avatars: [
+    '/assets/social-proof-avatar-1.webp',
+    '/assets/social-proof-avatar-2.webp',
+    '/assets/social-proof-avatar-3.webp',
+  ],
+} as const;
+
+// =============================================
+// HERO COMMITMENTS
+// =============================================
+export const HERO_COMMITMENTS = [
+  {
+    title: 'Quét cavet tự động',
+    desc: 'Không cần nhập thông tin thủ công',
+  },
+  {
+    title: 'Nhận giấy chứng nhận sau 1 phút',
+    desc: 'Bản điện tử gửi siêu tốc ngay khi thanh toán',
+  },
+  {
+    title: 'Hợp lệ theo quy định',
+    desc: 'Đầy đủ giá trị pháp lý khi xuất trình cho CSGT',
+  },
+] as const;

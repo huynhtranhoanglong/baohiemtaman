@@ -1,8 +1,7 @@
 import React from 'react';
 import Header from '@/components/ui/Header';
 import Footer from '@/components/ui/Footer';
-import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 
 export default function PrivacyPolicy() {
   return (
@@ -11,10 +10,7 @@ export default function PrivacyPolicy() {
         <Header />
         
         <main className="flex-grow px-5 py-6">
-          <Link href="/" className="inline-flex items-center text-[#0253af] text-[14px] font-medium mb-5 hover:underline transition-colors outline-none cursor-pointer">
-            <ChevronLeft className="w-4 h-4 mr-1" />
-            Trở về hệ thống tạo đơn
-          </Link>
+          <BackButton />
           
           <h1 className="text-[20px] font-bold text-[#1a1a1a] mb-5">Chính sách bảo mật dữ liệu</h1>
           
