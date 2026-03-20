@@ -122,7 +122,7 @@ export default function GuideModal({ isOpen, onClose }: GuideModalProps) {
             <div className="flex items-start gap-3">
               <Search className="w-5 h-5 text-[#0253af] shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-bold text-[#1a1a1a] text-[15px] mb-1">Cách nhanh nhất để tìm số khung, số máy?</h3>
+                <h3 className="font-bold text-[#1a1a1a] text-[15px] mb-1">Cách tìm số khung, số máy đơn giản</h3>
                 <p className="text-[14px] text-[#4b5563] leading-relaxed">
                   Bạn có thể tìm trên cà vẹt xe (giấy đăng ký xe), như hình hướng dẫn bên trên.
                 </p>
@@ -137,7 +137,7 @@ export default function GuideModal({ isOpen, onClose }: GuideModalProps) {
                   Theo Thông tư 24/2023/TT-BCA của Bộ Công an, biển số xe được cấp và quản lý theo mã định danh của chủ xe.
                 </p>
                 <p className="text-[14px] text-[#4b5563] leading-relaxed">
-                  Do vậy công ty bảo hiểm yêu cầu số khung, số máy để định tiết chính xác tài sản bảo hiểm để hỗ trợ tốt nhất khi xảy ra sự kiện bảo hiểm.
+                  Do vậy công ty bảo hiểm yêu cầu số khung, số máy nhằm nhận diện chính xác tài sản, từ đó hỗ trợ tối ưu quyền lợi khi không may xảy ra sự kiện bảo hiểm.
                 </p>
               </div>
             </div>

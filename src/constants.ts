@@ -80,7 +80,7 @@ export const PROVIDER_DATA: Record<string, {
     achievements: [
       'Năng lực tài chính xuất sắc, bệ phóng từ tập đoàn DB Insurance hạng AA+ (AM Best).',
       'Ứng dụng AI và Big Data tối ưu hóa quy trình khai báo, giám định và bồi thường.',
-      'Mục tiêu trở thành công ty có tốc độ bồi thường nhanh nhất thị trường.',
+      'Mục tiêu mang lại tốc độ bồi thường nhanh chóng và tối ưu cho khách hàng.',
     ],
   },
 };
@@ -156,10 +156,32 @@ export const HERO_COMMITMENTS = [
   },
   {
     title: 'Nhận giấy chứng nhận sau 1 phút',
-    desc: 'Bản điện tử gửi siêu tốc ngay khi thanh toán',
+    desc: 'Bản điện tử nhận ngay sau khi thanh toán thành công',
   },
   {
     title: 'Hợp lệ theo quy định',
     desc: 'Đầy đủ giá trị pháp lý khi xuất trình cho CSGT',
   },
 ] as const;
+
+// =============================================
+// FAQ (CÂU HỎI THƯỜNG GẶP)
+// =============================================
+export const FAQ_ITEMS = [
+  {
+    question: 'Xuất trình Giấy chứng nhận bảo hiểm điện tử (PDF) trên điện thoại cho CSGT có hợp lệ không?',
+    answer: 'Rất hợp lệ và tiện lợi. Căn cứ theo Khoản 3 Điều 10, Nghị định 67/2023/NĐ-CP, Giấy chứng nhận bảo hiểm điện tử có giá trị pháp lý tương đương với bản giấy truyền thống.\n\nKhi được yêu cầu, bạn chỉ cần mở file PDF lưu trên điện thoại di động (qua Zalo hoặc Email) để xuất trình. Cơ quan chức năng sẽ quét mã QR trên giấy để tra cứu trực tiếp trên hệ thống cơ sở dữ liệu.\n\nTại Tâm An, các chứng nhận điện tử được cấp phát từ hệ thống của Tổng Công ty Bảo hiểm Hàng không (DBV), đảm bảo đúng chuẩn quy định pháp luật và có hiệu lực trên toàn quốc.',
+  },
+  {
+    question: 'Nếu không có Bảo hiểm xe máy, tôi sẽ bị phạt bao nhiêu tiền khi bị kiểm tra?',
+    answer: 'Theo quy định mới nhất tại Khoản 2 Điều 18 Nghị định 168/2024/NĐ-CP (áp dụng từ 01/01/2025), người không mang theo hoặc không có Giấy chứng nhận bảo hiểm bắt buộc TNDS còn hiệu lực sẽ bị xử phạt hành chính từ 200.000 đồng đến 300.000 đồng.\n\nVới chi phí gia hạn chỉ khoảng 60.500đ/năm, trang bị bảo hiểm tại Tâm An tiết kiệm hơn rất nhiều so với mức tiền phạt. Thêm vào đó, đây còn là giải pháp san sẻ gánh nặng tài chính vững chắc, hỗ trợ chi trả bồi thường cho bên thứ ba nếu chẳng may xảy ra va chạm trên đường.',
+  },
+  {
+    question: 'Vì sao nên trang bị thêm Bảo hiểm xe máy Tự nguyện kèm với Bảo hiểm Bắt buộc?',
+    answer: 'Bảo hiểm TNDS Bắt buộc là loại hình bắt buộc để chi trả bồi thường cho bên thứ ba (người, tài sản bị va chạm) nhằm giảm gánh nặng tài chính nếu bạn có lỗi, nhưng loại hình này lại không bồi thường thiệt hại cho chính bạn hay người đi theo.\n\nĐể khắc phục khoảng trống đó, Bảo hiểm tai nạn Tự nguyện (dành cho người ngồi trên xe) là giải pháp bảo vệ bổ sung với mức phí chỉ 20.000đ/năm. Loại hình này hỗ trợ chi trả các rủi ro tổn thất về thân thể cho tối đa 02 người trên xe khi không may có tai nạn, với hạn mức bảo vệ lên đến 10 triệu đồng/người/vụ. Trang bị cả 2 loại hình này sẽ đem lại cho bạn sự an tâm vững vàng trên mọi chặng đường.',
+  },
+  {
+    question: 'Sau khi mua tôi có nhận được bảo hiểm bản cứng không? Bản điện tử có lợi ích gì?',
+    answer: 'Khách hàng sẽ không cần thẻ giấy cứng mà sẽ nhận được ngay tài liệu Giấy chứng nhận bảo hiểm điện tử (được cấp phát từ hệ thống DBV) gửi trực tiếp qua Zalo hoặc Email cá nhân sau khi thanh toán thành công.\n\nSử dụng bản điện tử thay thế mang lại những điểm cộng cực kỳ ưu việt: Bạn không phải chờ đợi bưu tá mất thời gian, giúp bạn xóa bỏ nỗi lo rách nát, thất lạc hay quên mang theo giấy tờ. Khi lưu thông, bạn chỉ việc mở file lưu sẵn trên điện thoại di động mọi lúc mọi nơi để xuất trình.\n\nBên cạnh tính tiện lợi và an toàn cho người sử dụng, việc áp dụng bản điện tử còn trực tiếp góp phần chung tay bảo vệ môi trường và thúc đẩy tiến trình chuyển đổi số quốc gia.',
+  }
+];

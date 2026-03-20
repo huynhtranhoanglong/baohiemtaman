@@ -16,6 +16,10 @@ export default function Footer() {
           Giới thiệu
         </Link>
         <span className="text-gray-300">|</span>
+        <Link href="/cau-hoi-thuong-gap" className="text-[#0253af] hover:underline">
+          FAQ
+        </Link>
+        <span className="text-gray-300">|</span>
         <Link href="/chinh-sach-bao-mat" className="text-[#0253af] hover:underline">
           Bảo mật
         </Link>

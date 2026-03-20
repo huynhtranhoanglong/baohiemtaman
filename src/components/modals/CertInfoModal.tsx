@@ -40,7 +40,7 @@ export default function CertInfoModal({ isOpen, onClose }: CertInfoModalProps) {
             <div>
               <h3 className="font-bold text-[#1a1a1a] text-[15px] mb-1">Có hiệu lực tương đương bản cứng</h3>
               <p className="text-[13px] text-[#4b5563] leading-relaxed">
-                Theo Nghị định 03/2021/NĐ-CP, Giấy chứng nhận điện tử có giá trị pháp lý tương đương bản cứng. Bạn hoàn toàn có thể sử dụng để xuất trình khi CSGT yêu cầu.
+                Theo Nghị định 67/2023/NĐ-CP, Giấy chứng nhận điện tử có giá trị pháp lý tương đương bản cứng. Bạn có thể yên tâm sử dụng để xuất trình khi CSGT yêu cầu.
               </p>
             </div>
           </div>
