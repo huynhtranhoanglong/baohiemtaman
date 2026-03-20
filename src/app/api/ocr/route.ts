@@ -93,6 +93,19 @@ export async function POST(req: NextRequest) {
     const alphanumericDotDash = /[^A-Z0-9.\-]/gi;  // Cho biển số (giữ dấu . và -)
     const alphanumericOnly = /[^A-Z0-9]/gi;          // Cho số khung, số máy
     
+    // Fix #3: Quét riêng Biển số xe bằng Regex trên toàn bộ text (Vì thứ tự dòng chữ dễ bị lộn xộn bởi các con dấu)
+    const joinedText = lines.join(" ");
+    // Định dạng: 2 số mã tỉnh + (khoảng trắng/gạch) + 1->3 ký tự chữ/số + (khoảng trắng/gạch) + 3 số ráp với 2 số (có dấu chấm/gạch) hoặc 4 số liền.
+    // VD: 77F1-401.44, 59-P1 123.45, 29A 1234, 29-MĐ1 123.45
+    const plateRegex = /\b([1-9][0-9][\-\s]*[A-ZĐ][A-ZĐ0-9]{0,2})[\-\s]*(\d{3}[\.\-\s]*\d{2}|\d{4})\b/gi;
+    const plateMatches = joinedText.match(plateRegex);
+    if (plateMatches && plateMatches.length > 0) {
+      // Lấy kết quả đầu tiên khớp cấu trúc biển số xe Việt Nam
+      const cleanMatch = plateMatches[0].toUpperCase().replace(/\s+/g, "");
+      // Yêu cầu: Xóa tất cả dấu chấm, gạch đứng/ngang và ký tự lạ, chỉ giữ chữ cái và chữ số (VD: 77F140144)
+      extracted.licensePlate = cleanMatch.replace(/[^A-ZĐ0-9]/g, '');
+    }
+
     // Fix #2: Logic parse text linh hoạt — kiểm tra cùng dòng (sau dấu ":") trước, rồi mới lấy dòng kế
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].toUpperCase();
@@ -104,8 +117,13 @@ export async function POST(req: NextRequest) {
             }
         }
         else if (line.includes("BIỂN SỐ") || line.includes("LICENSE PLATE")) {
+            // Cơ chế dự phòng (fallback) nếu Regex không bắt được
             if (!extracted.licensePlate) {
-              extracted.licensePlate = extractValue(originalLine, lines[i+1], alphanumericDotDash);
+              const fallbackPlate = extractValue(originalLine, lines[i+1], alphanumericDotDash);
+              // Phải có ít nhất 1 chữ số mới tạm chấp nhận (Tránh bắt nhầm chữ SnyEngineN do OCR đọc nhầm 'Số máy Engine N')
+              if (/\d/.test(fallbackPlate)) {
+                extracted.licensePlate = fallbackPlate;
+              }
             }
         }
         else if (line.includes("SỐ KHUNG") || line.includes("CHASSIS NO")) {
