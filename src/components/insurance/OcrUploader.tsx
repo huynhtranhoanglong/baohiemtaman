@@ -11,6 +11,43 @@ interface OcrUploaderProps {
   }) => void;
 }
 
+/**
+ * Thu nhỏ ảnh trước khi gửi lên server để giảm dung lượng.
+ * - Giới hạn chiều rộng tối đa 1600px (đủ để OCR đọc chữ)
+ * - Nén thành JPEG chất lượng 80%
+ * - Ảnh 5MB gốc → ~200-400KB sau khi resize
+ */
+function resizeImage(file: File, maxWidth = 1600): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Canvas context not available'));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const resizedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+        resolve(resizedBase64);
+      } catch (err) {
+        reject(err);
+      } finally {
+        URL.revokeObjectURL(img.src);
+      }
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src);
+      reject(new Error('Không thể đọc file ảnh.'));
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 export default function OcrUploader({ onOcrSuccess }: OcrUploaderProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -21,9 +58,9 @@ export default function OcrUploader({ onOcrSuccess }: OcrUploaderProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Optional: Kiểm tra size nếu cần
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Kích thước ảnh quá lớn (giới hạn 5MB).");
+    // Nâng giới hạn lên 10MB vì ảnh sẽ được resize trước khi gửi
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Kích thước ảnh quá lớn (giới hạn 10MB).");
       return;
     }
 
@@ -31,43 +68,33 @@ export default function OcrUploader({ onOcrSuccess }: OcrUploaderProps) {
     setSuccess(false);
 
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
-        const base64 = reader.result as string;
-        
-        try {
-          const res = await fetch('/api/ocr', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ imageBase64: base64 }),
-          });
+      // Bước 1: Thu nhỏ ảnh trước khi gửi (giảm từ 5-8MB → vài trăm KB)
+      const base64 = await resizeImage(file);
 
-          const data = await res.json();
-          
-          if (res.ok && data.success && data.extracted) {
-            onOcrSuccess(data.extracted);
-            setSuccess(true);
-            setTimeout(() => setSuccess(false), 4000);
-          } else {
-             alert(data.error || 'Trí tuệ nhân tạo (AI) chưa thể đọc được thông tin từ ảnh này. Vui lòng chụp rõ nét hơn hoặc điền thủ công.');
-          }
-        } catch (apiError) {
-          alert('Lỗi kết nối máy chủ OCR.');
-        } finally {
-          setLoading(false);
-        }
-      };
-      
-      reader.onerror = () => {
-        alert("Lỗi khi đọc file ảnh từ điện thoại.");
-        setLoading(false);
+      // Bước 2: Gửi ảnh đã thu nhỏ lên API OCR
+      const res = await fetch('/api/ocr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64 }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success && data.extracted) {
+        onOcrSuccess(data.extracted);
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 4000);
+      } else {
+        alert(data.error || 'Trí tuệ nhân tạo (AI) chưa thể đọc được thông tin từ ảnh này. Vui lòng chụp rõ nét hơn hoặc điền thủ công.');
       }
     } catch (error) {
-       console.error(error);
-       setLoading(false);
+      console.error('OCR upload error:', error);
+      alert('Lỗi kết nối máy chủ OCR.');
+    } finally {
+      // Duy nhất 1 chỗ tắt loading — tránh gọi nhiều lần
+      setLoading(false);
     }
-    
+
     // Reset file input để có thể chọn lại cùng 1 file
     if (fileInputRef.current) fileInputRef.current.value = '';
     if (galleryInputRef.current) galleryInputRef.current.value = '';
