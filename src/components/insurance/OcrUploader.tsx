@@ -8,6 +8,7 @@ interface OcrUploaderProps {
     engineNumber?: string;
     chassisNumber?: string;
     address?: string;
+    vehicleType?: string;
   }) => void;
 }
 
@@ -101,10 +102,7 @@ export default function OcrUploader({ onOcrSuccess }: OcrUploaderProps) {
   };
 
   return (
-    <div 
-      className={`w-full border border-dashed rounded-[12px] p-4 flex flex-col items-center justify-center gap-3 transition-colors select-none
-        ${success ? 'bg-green-50 border-green-300' : 'bg-[#f4f5f7] border-gray-300'}`}
-    >
+    <div className="w-full flex flex-col items-center justify-center gap-3 transition-colors select-none">
       <input 
         type="file" 
         accept="image/*" 
@@ -122,24 +120,20 @@ export default function OcrUploader({ onOcrSuccess }: OcrUploaderProps) {
       />
       
       {loading ? (
-        <div className="flex flex-col items-center animate-pulse duration-700">
+        <div className="flex flex-col items-center justify-center animate-pulse duration-700 bg-white w-full py-5 rounded-[16px] shadow-sm border border-[#0253af]/10">
           <Loader2 className="w-8 h-8 text-[#0253af] animate-spin mb-2" />
-          <p className="text-[13px] text-[#4b5563] text-center font-bold">AI đang phân tích ảnh...</p>
+          <p className="text-[14px] text-[#0253af] text-center font-bold">AI đang phân tích ảnh...</p>
           <p className="text-[12px] text-gray-500 text-center mt-1">Vui lòng đợi vài giây</p>
         </div>
       ) : success ? (
-        <div className="flex flex-col items-center animate-slide-up">
+        <div className="flex flex-col items-center justify-center animate-slide-up bg-[#f0fdf4] w-full py-5 rounded-[16px] border border-green-200">
           <CheckCircle2 className="w-9 h-9 text-green-500 mb-2" />
           <p className="text-[14px] text-green-600 font-extrabold text-center">Trích xuất thành công!</p>
           <p className="text-[12px] text-green-700/80 text-center mt-0.5">Các thông tin đã được tự động điền</p>
         </div>
       ) : (
         <>
-          <div className="text-center mt-2 mb-1">
-            <p className="text-[14px] font-bold text-[#1a1a1a]">Cung cấp Đăng ký xe (Cavet)</p>
-          </div>
-          
-          <div className="flex gap-8 items-center bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-100">
+          <div className="flex w-full justify-center gap-8 items-center bg-white px-5 py-4 rounded-[16px] shadow-sm border border-[#0253af]/15">
             {/* Nút chụp ảnh (bật camera) */}
             <button 
               type="button"

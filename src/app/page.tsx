@@ -41,6 +41,8 @@ export default function Home() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showStickyFooter, setShowStickyFooter] = useState(false);
+  const [isManualInput, setIsManualInput] = useState(false);
+  const [showOcrOptions, setShowOcrOptions] = useState(false);
   const today = TODAY;
 
   useEffect(() => {
@@ -249,25 +251,76 @@ export default function Home() {
           
           {/* Card Nhập Form Chính */}
           <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col gap-4">
-            <h3 className="font-bold text-[#1a1a1a] text-[16px]">Thông tin xe</h3>
-            
-            {/* Tích hợp OCR Uploader */}
-            <OcrUploader onOcrSuccess={(data) => {
-               trackEvent('ocr_success');
-               setFormData(prev => ({
-                 ...prev,
-                 ownerName: data.ownerName || prev.ownerName,
-                 licensePlate: data.licensePlate || prev.licensePlate,
-                 chassisNumber: data.chassisNumber || prev.chassisNumber,
-                 engineNumber: data.engineNumber || prev.engineNumber,
-                 address: data.address || prev.address
-               }));
-               
-               // Xóa các cảnh báo lỗi nếu form đã được điền đủ do OCR
-               setErrors({});
-            }} />
-
-            <div className="w-full h-[1px] bg-gray-100 my-1" />
+            {!isManualInput ? (
+              <div className="bg-blue-50/40 border border-[#0253af]/20 rounded-[12px] p-5 flex flex-col items-center gap-4">
+                <div className="relative p-2.5 flex items-center justify-center">
+                  {/* 4 góc vuông tạo hiệu ứng "Công nghệ quét" */}
+                  <div className="absolute top-0 left-0 w-3.5 h-3.5 border-t-[2.5px] border-l-[2.5px] border-[#0253af] rounded-tl-[2px]" />
+                  <div className="absolute top-0 right-0 w-3.5 h-3.5 border-t-[2.5px] border-r-[2.5px] border-[#0253af] rounded-tr-[2px]" />
+                  <div className="absolute bottom-0 left-0 w-3.5 h-3.5 border-b-[2.5px] border-l-[2.5px] border-[#0253af] rounded-bl-[2px]" />
+                  <div className="absolute bottom-0 right-0 w-3.5 h-3.5 border-b-[2.5px] border-r-[2.5px] border-[#0253af] rounded-br-[2px]" />
+                  
+                  <img src="/assets/ca-vet.webp" alt="Minh hoạ cavet" className="h-[40px] object-contain drop-shadow-md opacity-90" />
+                </div>
+                <p className="text-[#1a1a1a] text-[15px] font-medium text-center px-2">
+                  Điền thông tin tự động từ giấy đăng ký xe
+                </p>
+                
+                {!showOcrOptions ? (
+                  <div className="flex w-full gap-3 mt-1">
+                    <button 
+                      type="button"
+                      onClick={() => setIsManualInput(true)} 
+                      className="flex-1 py-3 px-1 rounded-xl border-[1.5px] border-[#0253af] text-[#0253af] font-bold text-[14.5px] bg-white transition-colors"
+                    >
+                      Nhập thủ công
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setShowOcrOptions(true)} 
+                      className="flex-1 py-3 px-1 rounded-xl bg-[#0253af] text-white font-bold text-[14.5px] shadow-sm transition-colors"
+                    >
+                      Nhập tự động
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-full mt-1 animate-slide-up">
+                    <OcrUploader onOcrSuccess={(data) => {
+                       trackEvent('ocr_success');
+                       setFormData(prev => ({
+                         ...prev,
+                         ownerName: data.ownerName || prev.ownerName,
+                         licensePlate: data.licensePlate || prev.licensePlate,
+                         chassisNumber: data.chassisNumber || prev.chassisNumber,
+                         engineNumber: data.engineNumber || prev.engineNumber,
+                         address: data.address || prev.address,
+                         vehicleType: data.vehicleType || prev.vehicleType
+                       }));
+                       setErrors({});
+                       setIsManualInput(true);
+                    }} />
+                    <button 
+                      type="button"
+                      onClick={() => setIsManualInput(true)}
+                      className="mt-3 w-full py-3 px-1 rounded-xl border-[1.5px] border-[#0253af] text-[#0253af] font-bold text-[14.5px] bg-white transition-colors"
+                    >
+                      Nhập thủ công
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <div className="flex justify-between items-center mb-1">
+                  <h3 className="font-bold text-[#1a1a1a] text-[16px]">Thông tin xe</h3>
+                  <button 
+                    type="button"
+                    onClick={() => { setIsManualInput(false); setShowOcrOptions(true); }}
+                    className="text-[#0253af] text-[13px] font-bold hover:underline"
+                  >
+                    Quét cavet tự động
+                  </button>
+                </div>
             
             <FloatingInput 
               label="Tên chủ xe *" 
@@ -324,6 +377,8 @@ export default function Home() {
             >
               Cách tìm số khung, số máy
             </button>
+            </>
+            )}
           </div>
 
           <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col gap-4">

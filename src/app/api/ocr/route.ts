@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import vision from '@google-cloud/vision';
 import path from 'path';
+import { VEHICLE_TYPE_IDS } from '@/constants';
 
 // Tạo Client cho Vision API
 // Ưu tiên đọc từ biến môi trường nếu chạy trên Vercel, hoặc dùng trực tiếp file JSON tại Local
@@ -87,6 +88,7 @@ export async function POST(req: NextRequest) {
       chassisNumber: '',
       engineNumber: '',
       address: '',
+      vehicleType: '',
     };
 
     // Regex dọn dẹp cho từng loại field
@@ -95,6 +97,26 @@ export async function POST(req: NextRequest) {
     
     // Fix #3: Quét riêng Biển số xe bằng Regex trên toàn bộ text (Vì thứ tự dòng chữ dễ bị lộn xộn bởi các con dấu)
     const joinedText = lines.join(" ");
+
+    // Nhận diện Loại xe (Quét dung tích xi lanh và từ khóa điện/kW)
+    const powerRegex = /(\d+[\.\,]?\d*)\s*(KW)\b/i;
+    const capacityRegex = /(\d+[\.\,]?\d*)\s*(CM3|CC)\b/i;
+    
+    // Tránh việc nhầm chữ "Điện" trong địa chỉ, ta bắt cụm từ "Xe (máy) điện" hoặc đơn vị "kW"
+    if (powerRegex.test(joinedText) || /\bXE\s*(MÁY\s*)?ĐIỆN\b/i.test(joinedText)) {
+      extracted.vehicleType = VEHICLE_TYPE_IDS.ELECTRIC;
+    } else {
+      const matchCapacity = joinedText.match(capacityRegex);
+      if (matchCapacity) {
+        const capacityVal = parseFloat(matchCapacity[1].replace(',', '.'));
+        // Dưới 50cc (ví dụ 49.5cm3) thì quy về <=50cc
+        if (capacityVal < 50) {
+          extracted.vehicleType = VEHICLE_TYPE_IDS.BELOW_50CC;
+        } else {
+          extracted.vehicleType = VEHICLE_TYPE_IDS.ABOVE_50CC;
+        }
+      }
+    }
     // Định dạng: 2 số mã tỉnh + (khoảng trắng/gạch) + 1->3 ký tự chữ/số + (khoảng trắng/gạch) + 3 số ráp với 2 số (có dấu chấm/gạch) hoặc 4 số liền.
     // VD: 77F1-401.44, 59-P1 123.45, 29A 1234, 29-MĐ1 123.45
     const plateRegex = /\b([1-9][0-9][\-\s]*[A-ZĐ][A-ZĐ0-9]{0,2})[\-\s]*(\d{3}[\.\-\s]*\d{2}|\d{4})\b/gi;
