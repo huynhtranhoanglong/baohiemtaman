@@ -252,8 +252,10 @@ export default function Home() {
           {/* Card Nhập Form Chính */}
           <div className="bg-white rounded-[12px] p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col gap-4">
             {!isManualInput ? (
-              <div className="bg-blue-50/40 border border-[#0253af]/20 rounded-[12px] p-5 flex flex-col items-center gap-4">
-                <div className="relative p-2.5 flex items-center justify-center">
+              <>
+                <h3 className="font-bold text-[#1a1a1a] text-[16px] mb-1">Thông tin xe</h3>
+                <div className="bg-blue-50/40 border border-[#0253af]/20 rounded-[12px] p-5 flex flex-col items-center gap-4">
+                  <div className="relative p-2.5 flex items-center justify-center">
                   {/* 4 góc vuông tạo hiệu ứng "Công nghệ quét" */}
                   <div className="absolute top-0 left-0 w-3.5 h-3.5 border-t-[2.5px] border-l-[2.5px] border-[#0253af] rounded-tl-[2px]" />
                   <div className="absolute top-0 right-0 w-3.5 h-3.5 border-t-[2.5px] border-r-[2.5px] border-[#0253af] rounded-tr-[2px]" />
@@ -309,6 +311,7 @@ export default function Home() {
                   </div>
                 )}
               </div>
+            </>
             ) : (
               <>
                 <div className="flex justify-between items-center mb-1">
