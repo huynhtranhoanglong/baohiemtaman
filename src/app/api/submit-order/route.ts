@@ -73,7 +73,31 @@ export async function POST(req: Request) {
 
     // --- Ghi dữ liệu vào cuối Bảng (Append) ---
     // Thứ tự Cột yêu cầu: 
-    // THỜI GIAN, CTY BẢO HIỂM, SỐ NĂM, BẮT ĐẦU, KẾT THÚC, LOẠI XE, BIỂN SỐ, SỐ KHUNG, SỐ MÁY, EMAIL, SỐ ĐIỆN THOẠI, TỰ NGUYỆN?, TỔNG TIỀN, TÊN KHÁCH HÀNG, ĐỊA CHỈ
+    // THỜI GIAN, CTY BẢO HIỂM, SỐ NĂM, BẮT ĐẦU, KẾT THÚC, LOẠI XE, BIỂN SỐ, SỐ KHUNG, SỐ MÁY, EMAIL, SỐ ĐIỆN THOẠI, TỰ NGUYỆN?, TỔNG TIỀN, TÊN KHÁCH HÀNG, ĐỊA CHỈ, MÃ ĐƠN HÀNG
+
+    // -- Lấy Mã Đơn Hàng cuối cùng (Cột P) --
+    let nextIdNumber = 1;
+    try {
+      const getResponse = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: 'P:P',
+      });
+      const rows = getResponse.data.values;
+      if (rows && rows.length > 0) {
+        const lastRow = rows[rows.length - 1];
+        const lastOrderId = lastRow[0];
+        if (lastOrderId && lastOrderId.startsWith('ta')) {
+          const lastNumber = parseInt(lastOrderId.replace('ta', ''), 10);
+          if (!isNaN(lastNumber)) {
+            nextIdNumber = lastNumber + 1;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Không thể lấy Mã đơn hàng cuối, bắt đầu từ 1", e);
+    }
+    const orderId = `ta${String(nextIdNumber).padStart(6, '0')}`;
+
     const rowData = [
       gmt7DateString,              // A: THỜI GIAN (GMT+7)
       provider.toUpperCase(),      // B: CTY BẢO HIỂM
@@ -89,12 +113,13 @@ export async function POST(req: Request) {
       isVoluntaryIncluded ? 'Có' : 'Không', // L: TỰ NGUYỆN?
       totalPrice,                  // M: TỔNG TIỀN
       ownerName || '',             // N: TÊN KHÁCH HÀNG
-      address || ''                // O: ĐỊA CHỈ
+      address || '',               // O: ĐỊA CHỈ
+      orderId                      // P: MÃ ĐƠN HÀNG
     ];
 
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'A:O', // Cột mở rộng đến O
+      range: 'A:P', // Cột mở rộng đến P
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [rowData],
@@ -102,7 +127,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(
-      { success: true, message: 'Ghi đơn thành công', data: response.data },
+      { success: true, message: 'Ghi đơn thành công', data: response.data, orderId },
       { status: 200 }
     );
   } catch (error: any) {

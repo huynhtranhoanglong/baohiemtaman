@@ -31,6 +31,7 @@ const TODAY = new Date().toISOString().split('T')[0];
 
 export default function Home() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [orderId, setOrderId] = useState<string | null>(null);
   const [isCertModalOpen, setIsCertModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
   const [isBenefitModalOpen, setIsBenefitModalOpen] = useState(false);
@@ -153,6 +154,7 @@ export default function Home() {
       startDate: today,
       endDate: end.toISOString().split('T')[0],
     });
+    setOrderId(null);
     setCurrentStep(1);
   }, [today]);
 
@@ -181,12 +183,24 @@ export default function Home() {
           body: JSON.stringify(payload)
         });
 
+        let finalOrderId = null;
         if (!res.ok) {
           console.error("Lỗi khi gửi API", await res.text());
           alert('Lỗi gửi API Sheets (thiếu .env), nhưng vẫn chuyển thử trang Thành Công!');
+        } else {
+          const resData = await res.json();
+          if (resData.orderId) {
+            finalOrderId = resData.orderId;
+            setOrderId(finalOrderId);
+          }
         }
         
-        trackEvent('purchase', { value: totalPrice, currency: 'VND', items: [{ item_name: 'Bảo hiểm xe máy', item_category: formData.vehicleType }] });
+        trackEvent('purchase', { 
+          transaction_id: finalOrderId, // Data layer for Order ID
+          value: totalPrice, 
+          currency: 'VND', 
+          items: [{ item_name: 'Bảo hiểm xe máy', item_category: formData.vehicleType }] 
+        });
         setCurrentStep(3);
       } catch (error) {
         console.error('Fetch error:', error);
@@ -366,6 +380,7 @@ export default function Home() {
           {currentStep === 3 && (
             <SuccessCard 
               email={formData.email}
+              orderId={orderId}
               onBuyAnother={handleBuyAnother}
               onGoHome={handleBuyAnother}
             />

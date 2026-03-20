@@ -4,11 +4,12 @@ import { PROJECT_INFO } from '@/constants';
 
 interface SuccessCardProps {
   email: string;
+  orderId?: string | null;
   onBuyAnother: () => void;
   onGoHome: () => void;
 }
 
-export default function SuccessCard({ email, onBuyAnother, onGoHome }: SuccessCardProps) {
+export default function SuccessCard({ email, orderId, onBuyAnother, onGoHome }: SuccessCardProps) {
   return (
     <div className="flex flex-col items-center justify-center animate-slide-up">
       {/* Khối Card lớn chúc mừng */}
@@ -23,6 +24,13 @@ export default function SuccessCard({ email, onBuyAnother, onGoHome }: SuccessCa
           </div>
 
           <h2 className="text-[22px] font-bold text-[#1a1a1a] mb-2">Đăng ký thành công!</h2>
+          
+          {orderId && (
+            <div className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-2 mt-2 mb-4 text-[#0253af] font-mono font-bold text-lg tracking-wider">
+              Mã hồ sơ: {orderId.toUpperCase()}
+            </div>
+          )}
+
           <p className="text-[14px] text-[#4b5563] mb-6 px-2 leading-relaxed">
             Cảm ơn bạn đã tin dùng {PROJECT_INFO.BRAND_NAME}. Vui lòng kiểm tra email <span className="font-bold text-[#0253af]">{email || 'của bạn'}</span> để nhận thông tin hướng dẫn thanh toán. Giấy chứng nhận sẽ được gửi sau khi thanh toán hoàn tất.
           </p>
