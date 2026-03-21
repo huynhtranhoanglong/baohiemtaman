@@ -166,7 +166,7 @@ export default function AdminEmailPage() {
             
             <p style="margin-top: 30px; font-size: 14px;">Trong quá trình thực hiện nếu Quý khách gặp vấn đề liên quan đến giao dịch hoặc không nhận được giấy chứng nhận bảo hiểm sau khi thanh toán, vui lòng liên hệ trực tiếp với chúng tôi để được hỗ trợ nhanh nhất:</p>
             <div style="margin-top: 10px; font-size: 14px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
-              <div>💬 <strong>Zalo CSKH:</strong> <a href="https://zalo.me/0909999999" style="display: inline-block; margin-left: 5px; background-color: #0068ff; color: #ffffff; padding: 5px 12px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px;">Nhắn tin qua Zalo</a></div>
+              <div>💬 <strong>Zalo CSKH:</strong> <a href="https://zalo.me/84777575987" style="display: inline-block; margin-left: 5px; background-color: #0068ff; color: #ffffff; padding: 5px 12px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px;">Nhắn tin qua Zalo</a></div>
             </div>
             <p style="font-style: italic; color: #555;">Trân trọng cảm ơn Quý khách và mến chúc Quý khách sức khỏe, thành công.</p>
           </div>
