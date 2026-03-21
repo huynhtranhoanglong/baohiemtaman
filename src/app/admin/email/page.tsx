@@ -6,8 +6,13 @@ import { Mail, Settings, Send, Eye } from 'lucide-react';
 export default function AdminEmailPage() {
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
   
+  const [emailType, setEmailType] = useState<'payment' | 'certificate'>('payment');
+  
   // Template State (Saved to localStorage)
-  const [instructions, setInstructions] = useState('Cảm ơn Quý khách đã tin tưởng và mua sản phẩm bảo hiểm thông qua hệ thống phân phối của Tâm An (đối tác Global Care). Quý khách đã chọn phương thức thanh toán chuyển khoản, vui lòng thực hiện chuyển khoản bằng cách quét mã QR Code dưới đây.');
+  const [instructionsPayment, setInstructionsPayment] = useState('Cảm ơn Quý khách đã tin tưởng và mua sản phẩm bảo hiểm thông qua hệ thống phân phối của Tâm An (đối tác Global Care). Quý khách đã chọn phương thức thanh toán chuyển khoản, vui lòng thực hiện chuyển khoản bằng cách quét mã QR Code dưới đây.');
+  const [instructionsCertificate, setInstructionsCertificate] = useState('Chúc mừng Quý khách đã hoàn tất thanh toán. Giấy Chứng Nhận Bảo Hiểm Điện Tử của Quý khách đã được xuất thành công. Vui lòng bấm vào nút bên dưới để tải về và lưu trữ bản gốc có con dấu đỏ.');
+  
+  const currentInstructions = emailType === 'payment' ? instructionsPayment : instructionsCertificate;
   
   // Dynamic Customer Data
   const [customerName, setCustomerName] = useState('');
@@ -25,6 +30,9 @@ export default function AdminEmailPage() {
   const [amount, setAmount] = useState('');
   const [transferContent, setTransferContent] = useState('');
   
+  // Certificate Data
+  const [pdfUrl, setPdfUrl] = useState('');
+  
   // Status
   const [isSending, setIsSending] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
@@ -35,7 +43,9 @@ export default function AdminEmailPage() {
     if (savedTemplate) {
       try {
         const parsed = JSON.parse(savedTemplate);
-        if (parsed.instructions) setInstructions(parsed.instructions);
+        if (parsed.instructions) setInstructionsPayment(parsed.instructions);
+        if (parsed.instructionsPayment) setInstructionsPayment(parsed.instructionsPayment);
+        if (parsed.instructionsCertificate) setInstructionsCertificate(parsed.instructionsCertificate);
       } catch (e) {
         console.error("No valid template settings found.");
       }
@@ -44,6 +54,11 @@ export default function AdminEmailPage() {
     // Auto-fill from Order Management Dashboard
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
+      const qType = params.get('type');
+      if (qType === 'certificate' || qType === 'payment') {
+        setEmailType(qType);
+      }
+      
       const qName = params.get('name');
       const qEmail = params.get('email');
       const qPlate = params.get('plate');
@@ -70,7 +85,7 @@ export default function AdminEmailPage() {
   }, []);
 
   const saveTemplateSettings = () => {
-    const settings = { instructions };
+    const settings = { instructionsPayment, instructionsCertificate };
     localStorage.setItem('taman_email_template', JSON.stringify(settings));
     alert('Đã lưu cấu hình Mô tả Email vào trình duyệt thành công!');
   };
@@ -119,7 +134,7 @@ export default function AdminEmailPage() {
           
           <div class="content">
             <div style="color: #0253af; font-size: 18px; font-weight: bold; margin-bottom: 20px;">${finalGreeting}</div>
-            <p>${instructions}</p>
+            <p>${currentInstructions}</p>
             
             ${startDate || endDate || chassis || engine || plate ? `
             <div class="info-box" style="margin-top: 25px; border-left-color: #10b981;">
@@ -134,35 +149,46 @@ export default function AdminEmailPage() {
             </div>
             ` : ''}
             
-            ${amount && transferContent ? `
-            <div class="qr-section">
-              <img src="${qrUrl}" alt="VietQR" class="qr-image" />
-            </div>
-            ` : `
-            <div class="qr-section" style="background:#f1f5f9; height:280px; display:flex; align-items:center; justify-content:center; border:2px dashed #ccc; border-radius:12px; color:#94a3b8;">
-              Mã VietQR sẽ tự động hiện ở đây
-            </div>
-            `}
-            
-            <div class="info-box">
-              <h3>Hoặc thực hiện chuyển khoản bằng cách nhập theo thông tin sau:</h3>
-              <ul>
-                <li>Tên tài khoản: <strong>GC CTY CP TV GLOBAL CARE</strong></li>
-                <li>Số tài khoản: <strong>${accountNumber || '...'}</strong></li>
-                <li>Số tiền thanh toán: <strong>${formattedAmount} đồng</strong></li>
-                <li>Nội dung chuyển khoản (Vui lòng ghi đúng): <br/><br/><span class="highlight-code">${transferContent || '...'}</span></li>
-              </ul>
-              <div class="warning-box">
-                * Lưu ý: Thông tin chuyển khoản sẽ hết hiệu lực sau 0h hàng ngày, vui lòng thực hiện thanh toán trước thời gian này để tránh các vấn đề phát sinh.
+            ${emailType === 'payment' ? `
+              ${amount && transferContent ? `
+              <div class="qr-section">
+                <img src="${qrUrl}" alt="VietQR" class="qr-image" />
               </div>
-            </div>
-            
-            <h4>Hướng dẫn Thanh toán Internet Banking</h4>
-            <ol style="font-size: 14px; color: #444;">
-              <li>Mở ứng dụng chuyển khoản ngân hàng của bạn.</li>
-              <li>Quét mã QR hoặc nhập chính xác thông tin chuyển khoản bên trên.</li>
-              <li>Sau khi thanh toán thành công, ấn "Xác nhận đã chuyển khoản" trên ứng dụng của bạn.</li>
-            </ol>
+              ` : `
+              <div class="qr-section" style="background:#f1f5f9; height:280px; display:flex; align-items:center; justify-content:center; border:2px dashed #ccc; border-radius:12px; color:#94a3b8;">
+                Mã VietQR sẽ tự động hiện ở đây
+              </div>
+              `}
+              
+              <div class="info-box">
+                <h3>Hoặc thực hiện chuyển khoản bằng cách nhập theo thông tin sau:</h3>
+                <ul>
+                  <li>Tên tài khoản: <strong>GC CTY CP TV GLOBAL CARE</strong></li>
+                  <li>Số tài khoản: <strong>${accountNumber || '...'}</strong></li>
+                  <li>Số tiền thanh toán: <strong>${formattedAmount} đồng</strong></li>
+                  <li>Nội dung chuyển khoản (Vui lòng ghi đúng): <br/><br/><span class="highlight-code">${transferContent || '...'}</span></li>
+                </ul>
+                <div class="warning-box">
+                  * Lưu ý: Thông tin chuyển khoản sẽ hết hiệu lực sau 0h hàng ngày, vui lòng thực hiện thanh toán trước thời gian này để tránh các vấn đề phát sinh.
+                </div>
+              </div>
+              
+              <h4>Hướng dẫn Thanh toán Internet Banking</h4>
+              <ol style="font-size: 14px; color: #444;">
+                <li>Mở ứng dụng chuyển khoản ngân hàng của bạn.</li>
+                <li>Quét mã QR hoặc nhập chính xác thông tin chuyển khoản bên trên.</li>
+                <li>Sau khi thanh toán thành công, ấn "Xác nhận đã chuyển khoản" trên ứng dụng của bạn.</li>
+              </ol>
+            ` : `
+              <div style="text-align: center; margin: 40px 0;">
+                <a href="${pdfUrl || '#'}" target="_blank" style="background-color: #10b981; color: white; padding: 16px 32px; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 8px; display: inline-block; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.4);">
+                  ⬇ TẢI GIẤY CHỨNG NHẬN (PDF)
+                </a>
+                <div style="margin-top: 15px; font-size: 13px; color: #666;">
+                  Nhấn vào nút trên để xem & tải về bản gốc có chữ ký điện tử.
+                </div>
+              </div>
+            `}
             
             <p style="margin-top: 30px; font-size: 14px;">Trong quá trình thực hiện nếu Quý khách gặp vấn đề liên quan đến giao dịch hoặc không nhận được giấy chứng nhận bảo hiểm sau khi thanh toán, vui lòng liên hệ trực tiếp với chúng tôi để được hỗ trợ nhanh nhất:</p>
             <div style="margin-top: 10px; font-size: 14px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
@@ -182,8 +208,18 @@ export default function AdminEmailPage() {
   };
 
   const handleSendEmail = async () => {
-    if (!customerEmail || !customerName || !amount || !transferContent || !accountNumber) {
-      alert("Vui lòng điền đủ Tên, Email khách, Số tài khoản, Số tiền và Nội dung chuyển khoản!");
+    if (!customerEmail || !customerName) {
+      alert("Vui lòng điền đủ Tên và Email khách!");
+      return;
+    }
+    
+    if (emailType === 'payment' && (!amount || !transferContent || !accountNumber)) {
+      alert("Chế độ Yêu Cầu Thanh Toán: Vui lòng điền đủ Số tài khoản, Số tiền và Nội dung chuyển khoản!");
+      return;
+    }
+    
+    if (emailType === 'certificate' && (!pdfUrl)) {
+      alert("Chế độ Giao Chứng Nhận: Vui lòng dán Link File PDF!");
       return;
     }
 
@@ -191,12 +227,17 @@ export default function AdminEmailPage() {
     setStatusMessage('');
 
     try {
+      const emailSubject = emailType === 'payment' 
+        ? `Thông báo Yêu cầu thanh toán HĐ Bảo hiểm Tâm An (${customerName})`
+        : `[Quan trọng] Bàn giao Giấy Chứng nhận Bảo hiểm Điện tử Tâm An (${customerName})`;
+
       const response = await fetch('/api/admin/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           toEmail: customerEmail,
           customerName: customerName,
+          subject: emailSubject,
           templateHtml: getRenderedHtml(true)
         })
       });
@@ -214,6 +255,7 @@ export default function AdminEmailPage() {
         setEngine('');
         setStartDate('');
         setEndDate('');
+        setPdfUrl('');
       } else {
         setStatusMessage(`Lỗi: ${data.message}`);
       }
@@ -234,6 +276,21 @@ export default function AdminEmailPage() {
         {/* L E F T  P A N E L :  C O N T R O L S */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           
+          <div className="bg-gray-50 flex border-b border-gray-100 p-2 gap-2">
+            <button 
+              onClick={() => setEmailType('payment')}
+              className={`flex-1 py-3 text-sm font-bold rounded-md transition ${emailType === 'payment' ? 'bg-primary text-white shadow' : 'text-gray-500 hover:bg-gray-200'}`}
+            >
+              1. Thư Báo Nợ (VietQR)
+            </button>
+            <button 
+              onClick={() => setEmailType('certificate')}
+              className={`flex-1 py-3 text-sm font-bold rounded-md transition ${emailType === 'certificate' ? 'bg-emerald-600 text-white shadow' : 'text-gray-500 hover:bg-gray-200'}`}
+            >
+              2. Trả Hợp Đồng (PDF)
+            </button>
+          </div>
+
           <div className="flex border-b border-gray-100">
             <button 
               onClick={() => setActiveTab('editor')}
@@ -260,8 +317,13 @@ export default function AdminEmailPage() {
               
               <div className="space-y-4 text-sm">
                 <div>
-                  <label className="block text-gray-600 mb-1">Đoạn mô tả đầu thư</label>
-                  <textarea value={instructions} onChange={e => setInstructions(e.target.value)} rows={3} className="w-full px-3 py-2 border rounded-md" />
+                  <label className="block text-gray-600 mb-1">Đoạn mô tả đầu thư ({emailType === 'payment' ? 'Thanh toán' : 'Giao hợp đồng'})</label>
+                  <textarea 
+                    value={emailType === 'payment' ? instructionsPayment : instructionsCertificate} 
+                    onChange={e => emailType === 'payment' ? setInstructionsPayment(e.target.value) : setInstructionsCertificate(e.target.value)} 
+                    rows={4} 
+                    className="w-full px-3 py-2 border rounded-md" 
+                  />
                 </div>
                 <button onClick={saveTemplateSettings} className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md text-xs font-semibold">Lưu Cấu hình (Browser Cache)</button>
               </div>
@@ -305,21 +367,29 @@ export default function AdminEmailPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 p-4 bg-orange-50 border border-orange-100 rounded-lg">
-                <div className="col-span-2 text-sm font-semibold text-orange-800 mb-1">Thông tin thanh toán Global Care:</div>
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Số tài khoản nhận tiền (Woori Bank) *</label>
-                  <input type="text" value={accountNumber} onChange={e => setAccountNumber(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none font-bold text-primary" required />
+              {emailType === 'payment' ? (
+                <div className="grid grid-cols-2 gap-4 p-4 bg-orange-50 border border-orange-100 rounded-lg">
+                  <div className="col-span-2 text-sm font-semibold text-orange-800 mb-1">Thông tin thanh toán Global Care:</div>
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Số tài khoản nhận tiền (Woori Bank) *</label>
+                    <input type="text" value={accountNumber} onChange={e => setAccountNumber(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none font-bold text-primary" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Số tiền (VNĐ) *</label>
+                    <input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="86000" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none font-bold text-primary" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nội dung chuyển khoản *</label>
+                    <input type="text" value={transferContent} onChange={e => setTransferContent(e.target.value)} placeholder="trantcjvp..." className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none font-bold text-primary" />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Số tiền (VNĐ) *</label>
-                  <input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="86000" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none font-bold text-primary" required />
+              ) : (
+                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                  <div className="text-sm font-semibold text-emerald-800 mb-3">Đính kèm Liên kết File PDF:</div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Dán URL File Giấy Chứng Nhận (Từ Global Care) *</label>
+                  <input type="text" value={pdfUrl} onChange={e => setPdfUrl(e.target.value)} placeholder="https://tracuu.bhhk.vn/Data/Files/..." className="w-full px-4 py-2 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none font-bold text-emerald-700" />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nội dung chuyển khoản *</label>
-                  <input type="text" value={transferContent} onChange={e => setTransferContent(e.target.value)} placeholder="trantcjvp37526" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none font-bold text-primary" required />
-                </div>
-              </div>
+              )}
 
               {statusMessage && (
                 <div className={`p-4 rounded-lg text-sm font-medium ${statusMessage.includes('thành công') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -330,9 +400,9 @@ export default function AdminEmailPage() {
               <button 
                 onClick={handleSendEmail}
                 disabled={isSending}
-                className={`w-full py-4 mt-6 bg-primary hover:bg-primary-hover text-white font-bold rounded-lg shadow-md transition flex items-center justify-center gap-2 ${isSending ? 'opacity-70 cursor-not-allowed' : ''}`}
+                className={`w-full py-4 mt-6 ${emailType === 'payment' ? 'bg-primary hover:bg-primary-hover' : 'bg-emerald-600 hover:bg-emerald-700'} text-white font-bold rounded-lg shadow-md transition flex items-center justify-center gap-2 ${isSending ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
-                {isSending ? 'Đang gửi qua Hệ thống...' : <><Send size={18} /> GỬI EMAIL THÔNG BÁO</>}
+                {isSending ? 'Đang xử lý...' : <><Send size={18} /> {emailType === 'payment' ? 'GỬI YÊU CẦU THANH TOÁN' : 'GỬI GIẤY CHỨNG NHẬN (PDF)'}</>}
               </button>
             </div>
           </div>

@@ -120,12 +120,20 @@ export default function AdminOrdersPage() {
                         {order.amount ? Number(order.amount.replace(/[,.]/g, '')).toLocaleString('vi-VN') + ' đ' : '...'}
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <Link 
-                          href={`/admin/email?${queryParams}`}
-                          className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg font-medium shadow shadow-primary/20 transition-all text-sm"
-                        >
-                          <Mail size={16} /> Tạo Email
-                        </Link>
+                        <div className="flex flex-col gap-2">
+                          <Link 
+                            href={`/admin/email?type=payment&${queryParams}`}
+                            className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded-lg font-medium shadow shadow-primary/20 transition-all text-xs"
+                          >
+                            <Mail size={14} /> Gửi Yêu Cầu TT
+                          </Link>
+                          <Link 
+                            href={`/admin/email?type=certificate&${queryParams}`}
+                            className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-medium shadow shadow-emerald-600/20 transition-all text-xs"
+                          >
+                            <Mail size={14} /> Giao Chứng Nhận
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   )

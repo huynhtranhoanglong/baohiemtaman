@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer';
 
 export async function POST(request: Request) {
   try {
-    const { toEmail, customerName, templateHtml } = await request.json();
+    const { toEmail, customerName, subject, templateHtml } = await request.json();
 
     if (!toEmail || !templateHtml) {
       return NextResponse.json({ message: 'Thiếu thông tin nhận hoặc nội dung template.' }, { status: 400 });
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     const mailOptions = {
       from: `"Bảo hiểm Tâm An" <${EMAIL_USER}>`,
       to: toEmail,
-      subject: `Thông báo thanh toán - Bảo hiểm Tâm An (${customerName})`,
+      subject: subject || `Thông báo thanh toán - Bảo hiểm Tâm An (${customerName})`,
       html: templateHtml,
     };
 
