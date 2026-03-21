@@ -25,11 +25,13 @@ export default function AdminLayout({
             Tổng quan
           </Link>
           
-          <div className="flex items-center gap-3 px-4 py-3 text-gray-400 cursor-not-allowed rounded-lg">
+          <Link 
+            href="/admin/orders" 
+            className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-primary rounded-lg font-medium transition"
+          >
             <ShoppingCart size={20} />
             Quản lý đơn hàng
-            <span className="text-[10px] bg-gray-200 text-gray-500 px-2 py-1 rounded-full ml-auto">Soon</span>
-          </div>
+          </Link>
           
           <Link 
             href="/admin/email" 

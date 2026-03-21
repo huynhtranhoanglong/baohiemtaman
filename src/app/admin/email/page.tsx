@@ -7,15 +7,18 @@ export default function AdminEmailPage() {
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
   
   // Template State (Saved to localStorage)
-  const [headerImg, setHeaderImg] = useState('');
-  const [footerImg, setFooterImg] = useState('');
-  const [greeting, setGreeting] = useState('Kính gửi Quý khách hàng {name},');
   const [instructions, setInstructions] = useState('Cảm ơn Quý khách đã tin tưởng và mua sản phẩm bảo hiểm thông qua hệ thống phân phối của Tâm An (đối tác Global Care). Quý khách đã chọn phương thức thanh toán chuyển khoản, vui lòng thực hiện chuyển khoản bằng cách quét mã QR Code dưới đây.');
   
   // Dynamic Customer Data
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [plate, setPlate] = useState('');
+  
+  // Vehicle Details
+  const [chassis, setChassis] = useState('');
+  const [engine, setEngine] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   
   // Bank Transfer Data
   const [accountNumber, setAccountNumber] = useState('902009661565');
@@ -32,25 +35,53 @@ export default function AdminEmailPage() {
     if (savedTemplate) {
       try {
         const parsed = JSON.parse(savedTemplate);
-        if (parsed.headerImg) setHeaderImg(parsed.headerImg);
-        if (parsed.footerImg) setFooterImg(parsed.footerImg);
-        if (parsed.greeting) setGreeting(parsed.greeting);
         if (parsed.instructions) setInstructions(parsed.instructions);
       } catch (e) {
         console.error("No valid template settings found.");
       }
     }
+
+    // Auto-fill from Order Management Dashboard
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const qName = params.get('name');
+      const qEmail = params.get('email');
+      const qPlate = params.get('plate');
+      const qAmount = params.get('amount');
+      const qChassis = params.get('chassis');
+      const qEngine = params.get('engine');
+      const qStartDate = params.get('startDate');
+      const qEndDate = params.get('endDate');
+      
+      if (qName) setCustomerName(qName);
+      if (qEmail) setCustomerEmail(qEmail);
+      if (qPlate) setPlate(qPlate);
+      if (qAmount) setAmount(qAmount);
+      if (qChassis) setChassis(qChassis);
+      if (qEngine) setEngine(qEngine);
+      if (qStartDate) setStartDate(qStartDate);
+      if (qEndDate) setEndDate(qEndDate);
+      
+      // Clean up URL to prevent re-fill on manual refresh
+      if (qName || qEmail) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
   }, []);
 
   const saveTemplateSettings = () => {
-    const settings = { headerImg, footerImg, greeting, instructions };
+    const settings = { instructions };
     localStorage.setItem('taman_email_template', JSON.stringify(settings));
-    alert('Đã lưu cấu hình Template (Banner & Lời chào) vào trình duyệt thành công!');
+    alert('Đã lưu cấu hình Mô tả Email vào trình duyệt thành công!');
   };
 
-  const getRenderedHtml = () => {
-    const finalGreeting = greeting.replace('{name}', customerName ? `<strong>${customerName}</strong>` : '[Tên khách hàng]');
+  const getRenderedHtml = (isForEmail = false) => {
+    const finalGreeting = customerName ? `Kính gửi Quý khách hàng <strong>${customerName}</strong>,` : 'Kính gửi Quý khách hàng,';
     const formattedAmount = amount ? Number(amount).toLocaleString('vi-VN') : '...';
+    
+    // Auto-switch URL context: Preview uses relative path (to work on localhost), Email MUST use Absolute URL (to work inside Gmail inbox).
+    const headerImgUrl = isForEmail ? 'https://baohiemtaman.com/assets/TA-email-header.webp' : '/assets/TA-email-header.webp';
+    const footerImgUrl = isForEmail ? 'https://baohiemtaman.com/assets/TA-email-footer.webp' : '/assets/TA-email-footer.webp';
     
     // Using vietqr.io Open API
     const qrUrl = accountNumber && amount && transferContent 
@@ -84,11 +115,24 @@ export default function AdminEmailPage() {
       </head>
       <body>
         <div class="container">
-          ${headerImg ? `<img src="${headerImg}" alt="Header Banner" class="header-img" />` : '<div style="background:#0253af; height: 10px; width: 100%;"></div>'}
+          <img src="${headerImgUrl}" alt="Header Banner" class="header-img" />
           
           <div class="content">
-            <div class="title">${finalGreeting}</div>
+            <div style="color: #0253af; font-size: 18px; font-weight: bold; margin-bottom: 20px;">${finalGreeting}</div>
             <p>${instructions}</p>
+            
+            ${startDate || endDate || chassis || engine || plate ? `
+            <div class="info-box" style="margin-top: 25px; border-left-color: #10b981;">
+              <h3>Tóm tắt Thông tin Đăng ký:</h3>
+              <ul style="color: #444; line-height: 1.8;">
+                <li>Khách hàng: <strong>${customerName || '...'}</strong></li>
+                <li>Biển số: <strong style="text-transform: uppercase;">${plate || '...'}</strong></li>
+                <li>Số khung: <strong style="text-transform: uppercase;">${chassis || '...'}</strong></li>
+                <li>Số máy: <strong style="text-transform: uppercase;">${engine || '...'}</strong></li>
+                <li>Thời hạn BH: <strong>Từ ${startDate || '...'} Đến ${endDate || '...'}</strong></li>
+              </ul>
+            </div>
+            ` : ''}
             
             ${amount && transferContent ? `
             <div class="qr-section">
@@ -127,7 +171,7 @@ export default function AdminEmailPage() {
             <p style="font-style: italic; color: #555;">Trân trọng cảm ơn Quý khách và mến chúc Quý khách sức khỏe, thành công.</p>
           </div>
           
-          ${footerImg ? `<img src="${footerImg}" alt="Footer Banner" class="footer-img" />` : ''}
+          <img src="${footerImgUrl}" alt="Footer Banner" class="footer-img" />
           <div class="footer-text">
             Đây là email tự động. Vui lòng không chia sẻ mã QR này cho bất kỳ ai khác.
           </div>
@@ -153,7 +197,7 @@ export default function AdminEmailPage() {
         body: JSON.stringify({
           toEmail: customerEmail,
           customerName: customerName,
-          templateHtml: getRenderedHtml()
+          templateHtml: getRenderedHtml(true)
         })
       });
 
@@ -166,6 +210,10 @@ export default function AdminEmailPage() {
         setAmount('');
         setTransferContent('');
         setPlate('');
+        setChassis('');
+        setEngine('');
+        setStartDate('');
+        setEndDate('');
       } else {
         setStatusMessage(`Lỗi: ${data.message}`);
       }
@@ -206,26 +254,14 @@ export default function AdminEmailPage() {
             <div className="mb-8 bg-gray-50 p-4 rounded-lg border border-gray-100">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-semibold text-gray-700 flex items-center gap-2">
-                  <Settings size={18} /> Cấu hình Template (Lưu tự động)
+                  <Settings size={18} /> Cấu hình mô tả thư (Lưu tự động)
                 </h3>
               </div>
               
               <div className="space-y-4 text-sm">
                 <div>
-                  <label className="block text-gray-600 mb-1">URL Ảnh Header Banner (Cân đối tỷ lệ 16:9 hoặc siêu rộng)</label>
-                  <input type="text" value={headerImg} onChange={e => setHeaderImg(e.target.value)} placeholder="https://..." className="w-full px-3 py-2 border rounded-md" />
-                </div>
-                <div>
-                  <label className="block text-gray-600 mb-1">Lời chào mẫu (Dùng <code className="bg-gray-200 px-1 rounded">{'{name}'}</code> để gọi tên)</label>
-                  <input type="text" value={greeting} onChange={e => setGreeting(e.target.value)} className="w-full px-3 py-2 border rounded-md" />
-                </div>
-                <div>
                   <label className="block text-gray-600 mb-1">Đoạn mô tả đầu thư</label>
                   <textarea value={instructions} onChange={e => setInstructions(e.target.value)} rows={3} className="w-full px-3 py-2 border rounded-md" />
-                </div>
-                <div>
-                  <label className="block text-gray-600 mb-1">URL Ảnh Footer Banner (Tùy chọn)</label>
-                  <input type="text" value={footerImg} onChange={e => setFooterImg(e.target.value)} placeholder="https://..." className="w-full px-3 py-2 border rounded-md" />
                 </div>
                 <button onClick={saveTemplateSettings} className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md text-xs font-semibold">Lưu Cấu hình (Browser Cache)</button>
               </div>
@@ -247,9 +283,26 @@ export default function AdminEmailPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Biển Số Xe / Số khung (Bỏ trống cũng được)</label>
-                <input type="text" value={plate} onChange={e => setPlate(e.target.value)} placeholder="Ví dụ: 59X1-12345" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none uppercase" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Số khung</label>
+                  <input type="text" value={chassis} onChange={e => setChassis(e.target.value)} placeholder="RLA..." className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none uppercase" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Số máy</label>
+                  <input type="text" value={engine} onChange={e => setEngine(e.target.value)} placeholder="JA..." className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none uppercase" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Từ ngày</label>
+                  <input type="text" value={startDate} onChange={e => setStartDate(e.target.value)} placeholder="YYYY/MM/DD..." className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Đến ngày</label>
+                  <input type="text" value={endDate} onChange={e => setEndDate(e.target.value)} placeholder="YYYY/MM/DD..." className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 p-4 bg-orange-50 border border-orange-100 rounded-lg">
@@ -291,7 +344,7 @@ export default function AdminEmailPage() {
             <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2"><Eye size={18} /> Live Preview (Tỉ lệ thật 100%)</h3>
             <div className="bg-gray-100 p-4 rounded-xl border-2 border-dashed border-gray-300 max-h-[800px] overflow-y-auto">
               <div 
-                dangerouslySetInnerHTML={{ __html: getRenderedHtml() }} 
+                dangerouslySetInnerHTML={{ __html: getRenderedHtml(false) }} 
                 className="pointer-events-none"
               />
             </div>
