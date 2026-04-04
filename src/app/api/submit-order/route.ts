@@ -21,7 +21,11 @@ export async function POST(req: Request) {
       isVoluntaryIncluded,
       provider,
       totalPrice,
-      createdAt
+      createdAt,
+      referrerCode = '',
+      utmSource = '',
+      utmMedium = '',
+      utmCampaign = ''
     } = body;
 
     // Chuẩn bị Xác thực Google (Auth)
@@ -114,12 +118,16 @@ export async function POST(req: Request) {
       totalPrice,                  // M: TỔNG TIỀN
       ownerName || '',             // N: TÊN KHÁCH HÀNG
       address || '',               // O: ĐỊA CHỈ
-      orderId                      // P: MÃ ĐƠN HÀNG
+      orderId,                     // P: MÃ ĐƠN HÀNG
+      referrerCode || '',          // Q: MÃ GIỚI THIỆU
+      utmSource || '',             // R: UTM SOURCE
+      utmMedium || '',             // S: UTM MEDIUM
+      utmCampaign || ''            // T: UTM CAMPAIGN
     ];
 
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'A:P', // Cột mở rộng đến P
+      range: 'A:T', // Cột mở rộng đến T
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [rowData],

@@ -17,6 +17,10 @@ interface Order {
   amount: string;
   customerName: string;
   orderId: string;
+  referrerCode: string;
+  utmSource: string;
+  utmMedium: string;
+  utmCampaign: string;
 }
 
 export default function AdminOrdersPage() {
@@ -75,6 +79,7 @@ export default function AdminOrdersPage() {
               <tr>
                 <th className="px-6 py-4">Mã Đơn / Thời gian</th>
                 <th className="px-6 py-4">Khách hàng</th>
+                <th className="px-6 py-4">Mã Giới Thiệu</th>
                 <th className="px-6 py-4">Xe / Biển số</th>
                 <th className="px-6 py-4">Số Tiền</th>
                 <th className="px-6 py-4 text-center">Hành động</th>
@@ -83,7 +88,7 @@ export default function AdminOrdersPage() {
             <tbody className="divide-y divide-gray-100">
               {orders.length === 0 && !isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                     Chưa có đơn hàng nào hoặc dữ liệu trống.
                   </td>
                 </tr>
@@ -109,6 +114,16 @@ export default function AdminOrdersPage() {
                       <td className="px-6 py-4">
                         <div className="font-semibold text-gray-800">{order.customerName || '(Trống)'}</div>
                         <div className="text-gray-500">{order.email}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {order.referrerCode || order.utmSource ? (
+                          <>
+                            <div className="font-bold text-gray-800">{order.referrerCode || '(Trống)'}</div>
+                            {order.utmSource && <div className="text-xs text-gray-400 mt-1">Nguồn: {order.utmSource}</div>}
+                          </>
+                        ) : (
+                          <div className="text-gray-400 italic text-sm">(Tự nhiên)</div>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-block bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-medium mb-1">

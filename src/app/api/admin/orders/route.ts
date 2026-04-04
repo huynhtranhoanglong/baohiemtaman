@@ -17,7 +17,7 @@ export async function GET() {
     // Fetch from row 2 downward
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'A2:P',
+      range: 'A2:T',
     });
 
     const rows = response.data.values || [];
@@ -36,6 +36,10 @@ export async function GET() {
       amount: row[12] || '',
       customerName: row[13] || '',
       orderId: row[15] || '',
+      referrerCode: row[16] || '',
+      utmSource: row[17] || '',
+      utmMedium: row[18] || '',
+      utmCampaign: row[19] || '',
     })).reverse(); // Reverse so newest orders are at the top
     
     return NextResponse.json({ success: true, data: orders });

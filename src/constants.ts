@@ -100,6 +100,10 @@ export const DEFAULT_FORM_DATA = {
   chassisNumber: '',
   email: '',
   phone: '',
+  referrerCode: '',
+  utmSource: '',
+  utmMedium: '',
+  utmCampaign: '',
   isVoluntaryIncluded: true,
   provider: PROVIDER_IDS.DBV as string,
 };

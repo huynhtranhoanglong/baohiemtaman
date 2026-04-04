@@ -77,10 +77,45 @@ export default function Home() {
 
   // Hydrate state from sessionStorage (for returning from aux pages)
   useEffect(() => {
+    // 1. Capture UTM/Ref from URL & Store to localStorage
+    const params = new URLSearchParams(window.location.search);
+    const urlRef = params.get('ref') || params.get('referrerCode');
+    const urlSource = params.get('utm_source');
+    const urlMedium = params.get('utm_medium');
+    const urlCampaign = params.get('utm_campaign');
+
+    const trackingRaw = localStorage.getItem('tam_an_affiliate');
+    let tracking = trackingRaw ? JSON.parse(trackingRaw) : {};
+    let updated = false;
+
+    if (urlRef !== null) { tracking.referrerCode = urlRef; updated = true; }
+    if (urlSource !== null) { tracking.utmSource = urlSource; updated = true; }
+    if (urlMedium !== null) { tracking.utmMedium = urlMedium; updated = true; }
+    if (urlCampaign !== null) { tracking.utmCampaign = urlCampaign; updated = true; }
+
+    if (updated) {
+      localStorage.setItem('tam_an_affiliate', JSON.stringify(tracking));
+    }
+
+    // 2. Hydrate logic
+    let parsedForm = null;
     const savedForm = sessionStorage.getItem('insurance_form_data');
     if (savedForm) {
-      try { setFormData(JSON.parse(savedForm)); } catch(e){}
+      try { parsedForm = JSON.parse(savedForm); } catch(e){}
     }
+
+    setFormData(prev => {
+      const base = parsedForm || prev;
+      return {
+        ...base,
+        // Ưu tiên: URL mới -> LocalStorage -> Dữ liệu cũ trong Session -> Rỗng
+        referrerCode: (updated && urlRef) ? urlRef : (base.referrerCode || tracking.referrerCode || prev.referrerCode),
+        utmSource: (updated && urlSource) ? urlSource : (base.utmSource || tracking.utmSource || prev.utmSource),
+        utmMedium: (updated && urlMedium) ? urlMedium : (base.utmMedium || tracking.utmMedium || prev.utmMedium),
+        utmCampaign: (updated && urlCampaign) ? urlCampaign : (base.utmCampaign || tracking.utmCampaign || prev.utmCampaign),
+      };
+    });
+
     const savedStep = sessionStorage.getItem('insurance_current_step');
     if (savedStep) {
       setCurrentStep(Number(savedStep));
@@ -406,6 +441,14 @@ export default function Home() {
               value={formData.phone} 
               onChange={(val) => { updateField('phone', val); if (errors.phone) setErrors({...errors, phone: ''}); }} 
               error={errors.phone}
+            />
+
+            <FloatingInput 
+              label="Mã người giới thiệu (không bắt buộc)" 
+              placeholder="Nhập hoặc kiểm tra mã giới thiệu"
+              uppercase={true}
+              value={formData.referrerCode} 
+              onChange={(val) => updateField('referrerCode', val)} 
             />
 
             <button 
