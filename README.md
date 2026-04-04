@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tam An Insurance (Bảo hiểm Tâm An)
 
-## Getting Started
+Dự án Hệ thống bán Bảo hiểm Bắt buộc / Tự nguyện dành cho Xe Máy điện tử.
+Phân phối thông qua Global Care (Nhà bảo hiểm DBV).
 
-First, run the development server:
+## Kiến trúc
+- **Framework:** Next.js (App Router)
+- **Styling:** Tailwind CSS + PostCSS
+- **Forms & Tracking:** Tự động Autofill qua cấu trúc thẻ tham số URL, liên kết trực tiếp Google Sheets APIs.
+- **Deploy:** Vercel (CI/CD)
+
+## Quản trị (Admin)
+- Đường dẫn truy cập Quản lý Đơn hàng: `/admin/orders`
+- Cơ sở dữ liệu: Google Sheets API.
+
+---
+
+## Môi trường & Chạy cục bộ
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Mở trình duyệt với địa chỉ http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📅 Changelog (Lịch sử cập nhật nền tảng)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Bản cập nhật (04/04/2026)
+- **feat:** Bổ sung Toàn tập Hệ thống Affiliate Marketing (Cộng tác viên).
+  - Tự động bắt mã `ref`, `utm_source`, `utm_medium`, `utm_campaign` trên URL.
+  - Xây dựng hệ thống Autofill mã Referrer nhờ lưu Offline (Web Storage).
+  - Mở rộng Database Google Sheets (Cột Q-T) để bắt biến số của Affiliate.
+  - Cập nhật trang Admin `/admin/orders` hỗ trợ hiển thị Nguồn của khách hàng.
+- **chore:** Thêm file cấu hình `.npmrc` (`legacy-peer-deps`) nhằm sửa triệt để lỗi cài đặt của React 19 trên Server Vercel.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Bản cập nhật trước đây
+- Các tài liệu lõi và Marketing nội bộ được cấp quyền quản lý Offline riêng biệt tại máy cục bộ (ngăn đồng bộ trên Github để đảm bảo sự bảo mật của thuật toán Tracking Ads).
